@@ -19,5 +19,8 @@
 		"noFallthroughCasesInSwitch": false,
 		"strict": true,
 		"strictPropertyInitialization": false
+		// "paths": {
+		// 	"@/*": ["./src/*"]
+		// }
 	}
 }
