@@ -1,11 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { getTypeormConfig } from './app/config/typeorm.config';
 import { AuthController } from './auth/auth.controller';
 import { AuthModule } from './auth/auth.module';
-import { getTypeormConfig } from './config/typeorm.config';
 import { ProductController } from './product/product.controller';
 import { ProductModule } from './product/product.module';
 import { ReviewController } from './review/review.controller';
@@ -27,13 +25,12 @@ import { UserModule } from './user/user.module';
 		ProductModule,
 	],
 	controllers: [
-		AppController,
 		AuthController,
 		UserController,
 		ReviewController,
 		ProductController,
 	],
-	providers: [AppService],
+	providers: [],
 })
 export class AppModule {
 	// constructor(private dataSource: DataSource) {}

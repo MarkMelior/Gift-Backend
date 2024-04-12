@@ -1,3 +1,4 @@
+import { TimeStamps } from 'src/app/lib/classes/timestamp';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 export type Currency = 'RUB' | 'USD' | 'EUR';
@@ -9,7 +10,7 @@ export type MarketType =
 	| 'wildberries'
 	| 'sber';
 
-export interface MarketsProductData {
+export class MarketsProductData {
 	market: MarketType;
 	link: string;
 	rating: number;
@@ -33,11 +34,11 @@ export type SortSorting =
 export type FilterSortProps = SortCategory | SortSex | SortAge | SortSorting;
 
 @Entity('products')
-export class ProductModel {
+export class ProductModel extends TimeStamps {
 	@PrimaryGeneratedColumn()
 	_id: number;
 
-	@Column()
+	@Column({ type: 'simple-array' })
 	images: string[];
 
 	@Column()
@@ -46,13 +47,13 @@ export class ProductModel {
 	@Column()
 	creativity: number;
 
-	@Column()
+	@Column({ type: 'simple-array' })
 	filters: FilterSortProps[];
 
-	@Column()
+	@Column({ type: 'json' })
 	characteristics: Record<string, string[] | Record<string, string>>;
 
-	@Column()
+	@Column({ type: 'simple-array' })
 	markets: MarketsProductData[];
 
 	@Column()

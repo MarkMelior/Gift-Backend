@@ -5,7 +5,6 @@ export const getTypeormConfig = async (
 	configService: ConfigService,
 ): Promise<TypeOrmModuleOptions> => {
 	configService;
-	console.log('test: ', process.env.USERNAME);
 	return {
 		type: 'mysql',
 		host: process.env.HOSTNAME || 'localhost',

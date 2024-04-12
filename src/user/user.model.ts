@@ -1,31 +1,72 @@
-import { Currency } from 'src/product/product.model';
+import { ReviewModel } from 'src/review/review.model';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 export type Country = string; // TODO
 
 export type Gender = 'male' | 'female';
-export type Status = 'online' | 'offline' | 'busy' | 'invisible' | 'away';
+export enum Status {
+	ONLINE,
+	OFFLINE,
+	BUSY,
+	INVISIBLE,
+	AWAY,
+}
 export type ConfidentialityParams = 'private' | 'public' | 'friend';
 
-export interface ConfidentialityProfile {
+export class ConfidentialityProfile {
 	all: ConfidentialityParams;
 }
 
+@Entity('users')
 export class UserModel {
+	@PrimaryGeneratedColumn()
 	_id: number;
+
+	@Column({ unique: true })
 	email: string;
+
+	@Column({ unique: true })
 	phone: string;
+
+	@Column()
 	first: string;
+
+	@Column()
 	last: string;
+
+	@Column()
 	age: number;
-	currency: Currency;
-	country: Country;
-	city: string;
+
+	@Column()
+	country?: Country;
+
+	@Column()
+	city?: string;
+
+	@Column({ unique: true })
 	username: string;
-	avatar: string;
+
+	@Column()
+	avatar?: string;
+
+	@Column()
 	sex: Gender;
+
+	@Column({ default: Status.ONLINE, type: 'enum', enum: Status })
 	status: Status;
+
+	@Column({ type: 'simple-array' })
 	favorites: number[];
+
+	@Column({ type: 'simple-array' })
 	history: number[];
+
+	@Column()
 	confidentiality?: ConfidentialityProfile;
+
+	@Column()
 	gameId?: number;
+
+	@OneToMany(() => ReviewModel, (reviews) => reviews.userId)
+	reviews?: ReviewModel[];
 }

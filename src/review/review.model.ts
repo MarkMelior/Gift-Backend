@@ -1,3 +1,7 @@
+import { TimeStamps } from 'src/app/lib/classes/timestamp';
+import { UserModel } from 'src/user/user.model';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+
 export enum ReviewStatus {
 	PENDING,
 	ACCEPTED,
@@ -5,10 +9,20 @@ export enum ReviewStatus {
 	MAIN,
 }
 
-export class ReviewModel {
+@Entity('reviews')
+export class ReviewModel extends TimeStamps {
+	@PrimaryGeneratedColumn()
 	_id: number;
-	rating: number; // max 5 min 1
+
+	@Column()
+	rating: number; // TODO max 5 min 1
+
+	@Column()
 	comment: string;
+
+	@Column({ default: ReviewStatus.PENDING, type: 'enum', enum: ReviewStatus })
 	status: ReviewStatus;
-	userId: number; // ? number
+
+	@ManyToOne(() => UserModel, (user) => user._id)
+	userId: Pick<UserModel, '_id'>;
 }
