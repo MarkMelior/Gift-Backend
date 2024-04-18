@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Types } from 'mongoose';
 
 export enum ReviewStatus {
 	PENDING,
@@ -22,8 +23,8 @@ export class Review {
 	})
 	status: ReviewStatus;
 
-	// @ManyToOne(() => User, (user) => user._id)
-	// user: User;
+	@Prop()
+	userId: Types.ObjectId;
 }
 
 export const ReviewSchema = SchemaFactory.createForClass(Review);

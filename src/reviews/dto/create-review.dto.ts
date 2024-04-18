@@ -3,6 +3,6 @@ import { ReviewStatus } from '../review.schema';
 export class CreateReviewDto {
 	rating: number;
 	comment: string;
-	userId: number;
+	userId: string;
 	status?: ReviewStatus;
 }
