@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 namespace NodeJS {
 	interface ProcessEnv {
 		PORT: string;

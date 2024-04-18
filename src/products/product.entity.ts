@@ -1,5 +1,5 @@
-import { TimeStamps } from 'src/app/lib/classes/timestamp';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { TimeStamps } from '../app/lib/classes/timestamp';
 
 export type Currency = 'RUB' | 'USD' | 'EUR';
 
@@ -34,7 +34,7 @@ export type SortSorting =
 export type FilterSortProps = SortCategory | SortSex | SortAge | SortSorting;
 
 @Entity('products')
-export class ProductModel extends TimeStamps {
+export class Product extends TimeStamps {
 	@PrimaryGeneratedColumn()
 	_id: number;
 

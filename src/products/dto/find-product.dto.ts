@@ -1,4 +1,4 @@
-import { FilterSortProps } from '../product.model';
+import { FilterSortProps } from '../product.entity';
 
 export class FindProductDto {
 	limit: number;

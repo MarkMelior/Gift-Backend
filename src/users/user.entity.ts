@@ -1,5 +1,5 @@
-import { ReviewModel } from 'src/review/review.model';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Review } from '../reviews/review.entity';
 
 export type Country = string; // TODO
 
@@ -18,7 +18,7 @@ export class ConfidentialityProfile {
 }
 
 @Entity('users')
-export class UserModel {
+export class User {
 	@PrimaryGeneratedColumn()
 	_id: number;
 
@@ -61,12 +61,12 @@ export class UserModel {
 	@Column({ type: 'simple-array' })
 	history: number[];
 
-	@Column()
-	confidentiality?: ConfidentialityProfile;
+	// @Column() // ! FIX
+	// confidentiality?: ConfidentialityProfile;
 
 	@Column()
 	gameId?: number;
 
-	@OneToMany(() => ReviewModel, (reviews) => reviews.userId)
-	reviews?: ReviewModel[];
+	@OneToMany(() => Review, (reviews) => reviews.user)
+	reviews?: Review[];
 }

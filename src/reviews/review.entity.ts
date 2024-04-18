@@ -1,5 +1,4 @@
-import { TimeStamps } from 'src/app/lib/classes/timestamp';
-import { UserModel } from 'src/user/user.model';
+import { User } from 'src/users/user.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 export enum ReviewStatus {
@@ -10,7 +9,7 @@ export enum ReviewStatus {
 }
 
 @Entity('reviews')
-export class ReviewModel extends TimeStamps {
+export class Review {
 	@PrimaryGeneratedColumn()
 	_id: number;
 
@@ -23,6 +22,6 @@ export class ReviewModel extends TimeStamps {
 	@Column({ default: ReviewStatus.PENDING, type: 'enum', enum: ReviewStatus })
 	status: ReviewStatus;
 
-	@ManyToOne(() => UserModel, (user) => user._id)
-	userId: Pick<UserModel, '_id'>;
+	@ManyToOne(() => User, (user) => user._id)
+	user: User;
 }

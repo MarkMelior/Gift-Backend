@@ -1,8 +1,8 @@
-import { TimeStamps } from 'src/app/lib/classes/timestamp';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { TimeStamps } from '../app/lib/classes/timestamp';
 
-@Entity({ name: 'auth' })
-export class AuthModel extends TimeStamps {
+@Entity()
+export class Auth extends TimeStamps {
 	@PrimaryGeneratedColumn()
 	_id: number;
 

@@ -12,7 +12,7 @@ export const getTypeormConfig = async (
 		username: process.env.USER || 'root',
 		password: process.env.PASSWORD,
 		database: process.env.DATABASE,
-		entities: [],
+		autoLoadEntities: true,
 		synchronize: true,
 	};
 };
