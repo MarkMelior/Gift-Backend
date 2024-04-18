@@ -1,5 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { TimeStamps } from '../app/lib/classes/timestamp';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 export type Currency = 'RUB' | 'USD' | 'EUR';
 
@@ -33,29 +32,28 @@ export type SortSorting =
 
 export type FilterSortProps = SortCategory | SortSex | SortAge | SortSorting;
 
-@Entity('products')
-export class Product extends TimeStamps {
-	@PrimaryGeneratedColumn()
-	_id: number;
-
-	@Column({ type: 'simple-array' })
+@Schema({ timestamps: true })
+export class Product {
+	@Prop({ type: () => [String] })
 	images: string[];
 
-	@Column()
+	@Prop()
 	title: string;
 
-	@Column()
+	@Prop()
 	creativity: number;
 
-	@Column({ type: 'simple-array' })
+	@Prop({ type: () => [String] })
 	filters: FilterSortProps[];
 
-	@Column({ type: 'json' })
+	@Prop({ _id: false, type: () => Object })
 	characteristics: Record<string, string[] | Record<string, string>>;
 
-	@Column({ type: 'simple-array' })
+	@Prop({ type: () => [MarketsProductData] })
 	markets: MarketsProductData[];
 
-	@Column()
+	@Prop()
 	description?: string;
 }
+
+export const ProductSchema = SchemaFactory.createForClass(Product);

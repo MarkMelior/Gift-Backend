@@ -1,4 +1,4 @@
-import { FilterSortProps } from '../product.entity';
+import { FilterSortProps } from '../product.schema';
 
 export class FindProductDto {
 	limit: number;

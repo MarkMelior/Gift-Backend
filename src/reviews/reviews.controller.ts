@@ -9,13 +9,18 @@ import {
 	Post,
 } from '@nestjs/common';
 import { CreateReviewDto } from './dto/create-review.dto';
-import { ReviewStatus } from './review.entity';
 import { REVIEW_NOT_FOUND } from './reviews.const';
 import { ReviewsService } from './reviews.service';
 
 @Controller('reviews')
 export class ReviewsController {
 	constructor(private readonly reviewsService: ReviewsService) {}
+
+	// ! FOR TEST
+	@Get()
+	get() {
+		return this.reviewsService.getAll();
+	}
 
 	@Post()
 	async create(@Body() dto: CreateReviewDto) {
@@ -31,13 +36,13 @@ export class ReviewsController {
 		}
 	}
 
-	@Get('byUser/:id')
-	async getByUserId(@Param('id') id: number) {
-		return this.reviewsService.findByUserId(id);
-	}
+	// @Get('byUser/:id')
+	// async getByUserId(@Param('id') id: number) {
+	// 	return this.reviewsService.findByUserId(id);
+	// }
 
-	@Get('byStatus/:status')
-	async getByStatus(@Param('status') status: ReviewStatus) {
-		return this.reviewsService.findByStatus(status);
-	}
+	// @Get('byStatus/:status')
+	// async getByStatus(@Param('status') status: ReviewStatus) {
+	// 	return this.reviewsService.findByStatus(status);
+	// }
 }

@@ -10,7 +10,7 @@ import {
 	Post,
 } from '@nestjs/common';
 import { FindProductDto } from './dto/find-product.dto';
-import { Product } from './product.entity';
+import { Product } from './product.schema';
 
 @Controller('products')
 export class ProductsController {

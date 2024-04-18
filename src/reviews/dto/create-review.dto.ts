@@ -1,4 +1,4 @@
-import { ReviewStatus } from '../review.entity';
+import { ReviewStatus } from '../review.schema';
 
 export class CreateReviewDto {
 	rating: number;

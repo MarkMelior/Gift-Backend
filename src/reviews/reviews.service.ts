@@ -1,34 +1,36 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/users/user.entity';
-import { Repository } from 'typeorm';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 import { CreateReviewDto } from './dto/create-review.dto';
-import { Review, ReviewStatus } from './review.entity';
+import { Review } from './review.schema';
 
 @Injectable()
 export class ReviewsService {
 	constructor(
-		@InjectRepository(Review)
-		private readonly reviewsRepository: Repository<Review>,
+		@InjectModel(Review.name)
+		private readonly reviewModel: Model<Review>,
 	) {}
 
+	// ! FOR TEST
+	getAll() {
+		return this.reviewModel.find();
+	}
+
 	async create(dto: CreateReviewDto): Promise<Review> {
-		return this.reviewsRepository.create(dto);
+		const createdReview = this.reviewModel.create(dto);
+		return createdReview;
 	}
 
 	async delete(id: string): Promise<Review> {
-		const review = await this.reviewsRepository.findOneBy({
-			_id: parseInt(id),
-		});
-
-		return this.reviewsRepository.remove(review);
+		const deletedReview = this.reviewModel.findByIdAndDelete(id).exec();
+		return deletedReview;
 	}
 
-	async findByUserId(user: User): Promise<Review[]> {
-		return this.reviewsRepository.findBy({ user });
-	}
+	// async findByUserId(userId: string): Promise<Review[]> {
+	// 	return this.reviewModel.findById(userId);
+	// }
 
-	async findByStatus(status: ReviewStatus): Promise<Review[]> {
-		return this.reviewsRepository.findBy({ status });
-	}
+	// async findByStatus(status: ReviewStatus): Promise<Review[]> {
+	// 	return this.reviewModel.findBy({ status });
+	// }
 }
