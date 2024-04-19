@@ -3,6 +3,7 @@
 namespace NodeJS {
 	interface ProcessEnv {
 		PORT: string;
+		JWT_SECRET: string;
 
 		MYSQL_LOGIN: string;
 		MYSQL_PASSWORD: string;

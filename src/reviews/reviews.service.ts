@@ -22,10 +22,10 @@ export class ReviewsService {
 	}
 
 	async findByUserId(userId: string): Promise<Review[]> {
-		return this.reviewModel.find({ userId });
+		return this.reviewModel.find({ userId }).exec();
 	}
 
 	async findByStatus(status: ReviewStatus): Promise<Review[]> {
-		return this.reviewModel.find({ status });
+		return this.reviewModel.find({ status }).exec();
 	}
 }

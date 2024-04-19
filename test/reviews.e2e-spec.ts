@@ -32,7 +32,7 @@ describe('ReviewController (e2e)', () => {
 		await app.close();
 	});
 
-	it('/reviews (POST)', async (done) => {
+	it('/reviews (POST) - success', async (done) => {
 		return request(app.getHttpServer())
 			.post('/reviews')
 			.send(testDto)
@@ -42,6 +42,13 @@ describe('ReviewController (e2e)', () => {
 				expect(createdId).toBeDefined();
 				done();
 			});
+	});
+
+	it('/reviews (POST) - fail', () => {
+		return request(app.getHttpServer())
+			.post('/reviews')
+			.send({ ...testDto, rating: 0 })
+			.expect(400);
 	});
 
 	it('/reviews/byStatus/:status (GET)', async (done) => {

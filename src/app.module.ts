@@ -5,7 +5,6 @@ import { getMongoConfig } from './app/config/mongo.config';
 import { AuthModule } from './auth/auth.module';
 import { ProductsModule } from './products/products.module';
 import { ReviewsModule } from './reviews/reviews.module';
-import { UsersModule } from './users/users.module';
 
 @Module({
 	imports: [
@@ -16,7 +15,6 @@ import { UsersModule } from './users/users.module';
 			useFactory: getMongoConfig,
 		}),
 		AuthModule,
-		UsersModule,
 		ReviewsModule,
 		ProductsModule,
 	],

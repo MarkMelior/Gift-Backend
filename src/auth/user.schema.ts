@@ -23,7 +23,10 @@ export class User {
 	email: string;
 
 	@Prop({ unique: true })
-	phone: string;
+	username: string;
+
+	@Prop()
+	passwordHash: string;
 
 	@Prop()
 	first: string;
@@ -32,25 +35,10 @@ export class User {
 	last: string;
 
 	@Prop()
-	age: number;
-
-	@Prop()
-	country?: Country;
-
-	@Prop()
-	city?: string;
-
-	@Prop({ unique: true })
-	username: string;
-
-	@Prop()
 	avatar?: string;
 
 	@Prop()
-	sex: Gender;
-
-	@Prop({ default: Status.ONLINE, type: () => Number, enum: Status })
-	status: Status;
+	sex?: Gender;
 
 	@Prop({ type: () => [Number] })
 	favorites: number[];
@@ -61,11 +49,12 @@ export class User {
 	@Prop()
 	confidentiality?: ConfidentialityProfile;
 
-	@Prop()
-	gameId?: number;
+	// * for game
+	// @Prop({ default: Status.ONLINE, type: () => Number, enum: Status })
+	// status: Status;
 
-	// @OneToMany(() => Review, (reviews) => reviews.user)
-	// reviews?: Review[];
+	@Prop()
+	gameId?: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
