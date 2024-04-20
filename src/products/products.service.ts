@@ -36,7 +36,7 @@ export class ProductsService {
 		if (dto.maxPrice !== undefined) {
 			aggregatePipeline.push({
 				$match: {
-					'markets.price': { $lte: dto.maxPrice }, // Находим товары с ценой меньше или равной указанной
+					'markets.price': { $lte: dto.maxPrice },
 				},
 			});
 		}
@@ -45,7 +45,7 @@ export class ProductsService {
 		if (dto.minPrice !== undefined) {
 			aggregatePipeline.push({
 				$match: {
-					'markets.price': { $gte: dto.minPrice }, // Находим товары с ценой больше или равной указанной
+					'markets.price': { $gte: dto.minPrice },
 				},
 			});
 		}
@@ -55,7 +55,7 @@ export class ProductsService {
 			const filterMatch = dto.filters.map((filter) => ({ filters: filter }));
 			aggregatePipeline.push({
 				$match: {
-					$and: filterMatch, // Находим товары, которые соответствуют хотя бы одному из фильтров
+					$and: filterMatch,
 				},
 			});
 		}
@@ -64,7 +64,7 @@ export class ProductsService {
 		if (dto.sort) {
 			switch (dto.sort) {
 				case SortSorting.POPULAR:
-					// Сортировка по популярности (примерное направление)
+					// Сортировка по популярности
 					aggregatePipeline.push({ $sort: { reviewCount: -1 } });
 					break;
 				case SortSorting.RATING:
@@ -84,7 +84,7 @@ export class ProductsService {
 					aggregatePipeline.push({ $sort: { 'markets.price': 1 } });
 					break;
 				case SortSorting.NEW:
-					// Сортировка по новизне (примерное направление)
+					// Сортировка по новизне
 					aggregatePipeline.push({ $sort: { createdAt: -1 } });
 					break;
 				default:
@@ -98,5 +98,16 @@ export class ProductsService {
 		aggregatePipeline.push({ $limit: dto.limit });
 
 		return this.productModel.aggregate(aggregatePipeline).exec();
+	}
+
+	async findByText(text: string) {
+		return this.productModel
+			.find({
+				$or: [
+					{ title: { $regex: text, $options: 'i' } },
+					{ seoText: { $regex: text, $options: 'i' } },
+				],
+			})
+			.exec();
 	}
 }

@@ -44,6 +44,7 @@ export class ProductsController {
 		return product;
 	}
 
+	// @UseGuards(JwtAuthGuard)
 	@Delete(':id')
 	async delete(@Param('id', IdValidationPipe) id: string) {
 		const deletedProduct = await this.productsService.deleteById(id);
@@ -53,6 +54,7 @@ export class ProductsController {
 		}
 	}
 
+	// @UseGuards(JwtAuthGuard)
 	@Patch(':id')
 	async update(
 		@Param('id', IdValidationPipe) id: string,
@@ -72,5 +74,10 @@ export class ProductsController {
 	@Post('find')
 	async find(@Body() dto: FindProductDto) {
 		return this.productsService.find(dto);
+	}
+
+	@Get('search/:text')
+	async textSearch(@Param('text') text: string) {
+		return this.productsService.findByText(text);
 	}
 }

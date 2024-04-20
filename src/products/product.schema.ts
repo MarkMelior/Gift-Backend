@@ -34,7 +34,7 @@ export class Product {
 	markets: MarketsProductDto[];
 
 	@Prop()
-	description?: string;
+	seoText?: string;
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);
