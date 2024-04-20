@@ -1,4 +1,11 @@
-import { IsNumber, IsString, Max, Min } from 'class-validator';
+import {
+	IsEnum,
+	IsNumber,
+	IsOptional,
+	IsString,
+	Max,
+	Min,
+} from 'class-validator';
 import { ReviewStatus } from '../review.schema';
 
 export class CreateReviewDto {
@@ -13,6 +20,7 @@ export class CreateReviewDto {
 	@IsString()
 	userId: string;
 
-	// @IsEnum(ReviewStatus) // todo
+	@IsOptional()
+	@IsEnum(ReviewStatus)
 	status?: ReviewStatus;
 }

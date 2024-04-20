@@ -7,9 +7,12 @@ import {
 	HttpStatus,
 	Param,
 	Post,
+	UseGuards,
 	UsePipes,
 	ValidationPipe,
 } from '@nestjs/common';
+import { IdValidationPipe } from '../app/pipes/id-validation.pipe';
+import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { ReviewStatus } from './review.schema';
 import { REVIEW_NOT_FOUND } from './reviews.const';
@@ -25,8 +28,9 @@ export class ReviewsController {
 		return this.reviewsService.create(dto);
 	}
 
+	@UseGuards(JwtAuthGuard)
 	@Delete(':id')
-	async delete(@Param('id') id: string) {
+	async delete(@Param('id', IdValidationPipe) id: string) {
 		const review = await this.reviewsService.delete(id);
 
 		if (!review) {
@@ -35,7 +39,7 @@ export class ReviewsController {
 	}
 
 	@Get('byUser/:id')
-	async getByUserId(@Param('id') id: string) {
+	async getByUserId(@Param('id', IdValidationPipe) id: string) {
 		return this.reviewsService.findByUserId(id);
 	}
 
