@@ -1,21 +1,34 @@
-import { IsEmail, IsString, Length } from 'class-validator';
+import {
+	IsEmail,
+	IsString,
+	Length,
+	MaxLength,
+	MinLength,
+} from 'class-validator';
+import {
+	WRONG_EMAIL,
+	WRONG_LENGTH_USERNAME,
+	WRONG_MAX_LENGTH_PASSWORD,
+	WRONG_MIN_LENGTH_PASSWORD,
+} from '../auth.const';
 
 export class AuthRegisterDto {
-	@IsEmail()
+	@IsEmail({}, { message: WRONG_EMAIL })
 	email: string;
 
-	@Length(4, 14)
+	@Length(4, 14, { message: WRONG_LENGTH_USERNAME })
 	@IsString()
 	username: string;
 
-	@Length(8, 32)
+	@MinLength(8, { message: WRONG_MIN_LENGTH_PASSWORD })
+	@MaxLength(32, { message: WRONG_MAX_LENGTH_PASSWORD })
 	@IsString()
 	password: string;
 }
 
 export class AuthLoginDto {
 	// @ValidateIf((o) => o.username === undefined)
-	@IsEmail()
+	@IsEmail({}, { message: WRONG_EMAIL })
 	email: string;
 
 	// @ValidateIf((o) => o.email === undefined)
@@ -23,7 +36,8 @@ export class AuthLoginDto {
 	// @IsString()
 	// username: string;
 
-	@Length(8, 32)
+	@MinLength(8, { message: WRONG_MIN_LENGTH_PASSWORD })
+	@MaxLength(32, { message: WRONG_MAX_LENGTH_PASSWORD })
 	@IsString()
 	password: string;
 }

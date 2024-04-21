@@ -4,6 +4,7 @@ import {
 	IsNumber,
 	IsOptional,
 	IsString,
+	Min,
 } from 'class-validator';
 import { FilterSortProps } from '../product.schema';
 
@@ -17,6 +18,7 @@ export enum SortSorting {
 }
 
 export class FindProductDto {
+	@Min(1)
 	@IsNumber()
 	limit: number;
 

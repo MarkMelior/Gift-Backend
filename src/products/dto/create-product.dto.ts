@@ -39,5 +39,5 @@ export class CreateProductDto {
 
 	@IsString()
 	@IsOptional()
-	description?: string;
+	seoText?: string;
 }

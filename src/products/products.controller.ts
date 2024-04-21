@@ -9,10 +9,12 @@ import {
 	Param,
 	Patch,
 	Post,
+	UseGuards,
 	UsePipes,
 	ValidationPipe,
 } from '@nestjs/common';
 import { IdValidationPipe } from 'src/app/pipes/id-validation.pipe';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { CreateProductDto } from './dto/create-product.dto';
 import { FindProductDto } from './dto/find-product.dto';
 import { Product } from './product.schema';
@@ -44,7 +46,7 @@ export class ProductsController {
 		return product;
 	}
 
-	// @UseGuards(JwtAuthGuard)
+	@UseGuards(JwtAuthGuard)
 	@Delete(':id')
 	async delete(@Param('id', IdValidationPipe) id: string) {
 		const deletedProduct = await this.productsService.deleteById(id);
@@ -54,7 +56,7 @@ export class ProductsController {
 		}
 	}
 
-	// @UseGuards(JwtAuthGuard)
+	@UseGuards(JwtAuthGuard)
 	@Patch(':id')
 	async update(
 		@Param('id', IdValidationPipe) id: string,
