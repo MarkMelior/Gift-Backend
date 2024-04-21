@@ -19,6 +19,11 @@ import { getMongoConfig } from './config/mongo.config';
 		ReviewsModule,
 		ProductsModule,
 		FilesModule,
+		// TelegramModule.forRootAsync({
+		// 	imports: [ConfigModule],
+		// 	inject: [ConfigService],
+		// 	useFactory: getTelegramConfig,
+		// }),
 	],
 })
 export class AppModule {}
