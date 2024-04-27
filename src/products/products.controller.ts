@@ -13,6 +13,7 @@ import {
 	UsePipes,
 	ValidationPipe,
 } from '@nestjs/common';
+import { ArticleValidationPipe } from 'src/app/pipes/article-validation.pipe';
 import { IdValidationPipe } from 'src/app/pipes/id-validation.pipe';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -35,9 +36,14 @@ export class ProductsController {
 		return this.productsService.create(dto);
 	}
 
-	@Get(':id')
-	async get(@Param('id', IdValidationPipe) id: string) {
-		const product = await this.productsService.findById(id);
+	@Get('prices')
+	async getPrices() {
+		return this.productsService.getPrices();
+	}
+
+	@Get(':article')
+	async get(@Param('article', ArticleValidationPipe) article: string) {
+		const product = await this.productsService.findByArticle(article);
 
 		if (!product) {
 			throw new NotFoundException(PRODUCT_NOT_FOUND_ERROR);

@@ -21,6 +21,10 @@ export class ProductsService {
 		return this.productModel.findById(id).exec();
 	}
 
+	async findByArticle(article: string) {
+		return this.productModel.findOne({ article }).exec();
+	}
+
 	async deleteById(id: string) {
 		return this.productModel.findByIdAndDelete(id).exec();
 	}
@@ -109,5 +113,33 @@ export class ProductsService {
 				],
 			})
 			.exec();
+	}
+
+	async getPrices() {
+		const result = await this.productModel
+			.aggregate([
+				{
+					$unwind: '$markets',
+				},
+				{
+					$group: {
+						_id: null,
+						minPrice: { $min: '$markets.price' },
+						maxPrice: { $max: '$markets.price' },
+						avgPrice: { $avg: '$markets.price' },
+					},
+				},
+				{
+					$project: {
+						_id: 0,
+						minPrice: 1,
+						maxPrice: 1,
+						avgPrice: 1,
+					},
+				},
+			])
+			.exec();
+
+		return result.length > 0 ? result[0] : {};
 	}
 }

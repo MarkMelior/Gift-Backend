@@ -1,5 +1,6 @@
 import {
 	IsEmail,
+	IsOptional,
 	IsString,
 	Length,
 	MaxLength,
@@ -20,6 +21,10 @@ export class AuthRegisterDto {
 	@IsString()
 	username: string;
 
+	@IsOptional()
+	@IsString()
+	avatar?: string;
+
 	@MinLength(8, { message: WRONG_MIN_LENGTH_PASSWORD })
 	@MaxLength(32, { message: WRONG_MAX_LENGTH_PASSWORD })
 	@IsString()
@@ -28,13 +33,17 @@ export class AuthRegisterDto {
 
 export class AuthLoginDto {
 	// @ValidateIf((o) => o.username === undefined)
-	@IsEmail({}, { message: WRONG_EMAIL })
-	email: string;
+	// @IsEmail({}, { message: WRONG_EMAIL })
+	// email: string;
 
 	// @ValidateIf((o) => o.email === undefined)
 	// @Length(4, 14)
 	// @IsString()
 	// username: string;
+
+	@Length(4, 64)
+	@IsString()
+	login: string;
 
 	@MinLength(8, { message: WRONG_MIN_LENGTH_PASSWORD })
 	@MaxLength(32, { message: WRONG_MAX_LENGTH_PASSWORD })

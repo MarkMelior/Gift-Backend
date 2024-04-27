@@ -33,6 +33,12 @@ export class Product {
 	@Prop({ type: () => [MarketsProductDto] })
 	markets: MarketsProductDto[];
 
+	@Prop({
+		unique: true,
+		default: () => Math.floor(Math.random() * 900000000) + 100000000,
+	})
+	article: string;
+
 	@Prop()
 	seoText?: string;
 }
