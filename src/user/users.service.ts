@@ -16,4 +16,14 @@ export class UsersService {
 			.select({ passwordHash: 0 })
 			.exec();
 	}
+
+	async getUserFavorites(username: string) {
+		return this.userModel.findOne({ username }).exec();
+	}
+
+	// * проверка ролей на сервере
+	// async getUserRoles(userId: string) {
+	// 	const user = await this.userModel.findById(userId).exec();
+	// 	return user.roles;
+	// }
 }

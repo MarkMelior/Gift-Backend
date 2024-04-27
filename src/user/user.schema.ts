@@ -12,6 +12,11 @@ export enum Status {
 }
 export type ConfidentialityParams = 'private' | 'public' | 'friend';
 
+export enum UserRole {
+	ADMIN = 'admin',
+	MANAGER = 'manager',
+}
+
 export class ConfidentialityProfile {
 	@Prop()
 	all: ConfidentialityParams;
@@ -40,14 +45,17 @@ export class User {
 	@Prop()
 	sex?: Gender;
 
-	@Prop({ type: () => [Number] })
-	favorites: number[];
+	@Prop({ type: () => [String] })
+	favorites: string[];
 
-	@Prop({ type: () => [Number] })
-	history: number[];
+	@Prop({ type: () => [String] })
+	history: string[];
 
 	@Prop()
 	confidentiality?: ConfidentialityProfile;
+
+	@Prop({ type: () => [UserRole] })
+	roles?: UserRole[];
 
 	// * for game
 	// @Prop({ default: Status.ONLINE, type: () => Number, enum: Status })

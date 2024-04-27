@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { CreateProductDto } from './dto/create-product.dto';
 import { FindProductDto, SortSorting } from './dto/find-product.dto';
 import { Product } from './product.schema';
+import { PRODUCTS_CARD_DTO } from './products.const';
 
 @Injectable()
 export class ProductsService {
@@ -23,6 +24,13 @@ export class ProductsService {
 
 	async findByArticle(article: string) {
 		return this.productModel.findOne({ article }).exec();
+	}
+
+	async findByArticles(articles: string[]) {
+		return this.productModel
+			.find({ article: { $in: articles } })
+			.select(PRODUCTS_CARD_DTO)
+			.exec();
 	}
 
 	async deleteById(id: string) {
@@ -56,10 +64,12 @@ export class ProductsService {
 
 		// Добавление фильтров
 		if (dto.filters && dto.filters.length > 0) {
-			const filterMatch = dto.filters.map((filter) => ({ filters: filter }));
+			const filterNotMatch = dto.filters.map((filter) => ({
+				filters: { $nin: [filter] },
+			}));
 			aggregatePipeline.push({
 				$match: {
-					$and: filterMatch,
+					$and: filterNotMatch,
 				},
 			});
 		}
@@ -101,7 +111,10 @@ export class ProductsService {
 		// Добавление лимита
 		aggregatePipeline.push({ $limit: dto.limit });
 
-		return this.productModel.aggregate(aggregatePipeline).exec();
+		return this.productModel
+			.aggregate(aggregatePipeline)
+			.project(PRODUCTS_CARD_DTO)
+			.exec();
 	}
 
 	async findByText(text: string) {
