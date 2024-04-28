@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { FavoritesModule } from 'src/favorites/favorites.module';
 import { FilesModule } from 'src/files/files.module';
 import { UsersModule } from 'src/user/users.module';
 import { AuthModule } from '../auth/auth.module';
@@ -21,6 +22,7 @@ import { getMongoConfig } from './config/mongo.config';
 		ProductsModule,
 		FilesModule,
 		UsersModule,
+		FavoritesModule,
 		// TelegramModule.forRootAsync({
 		// 	imports: [ConfigModule],
 		// 	inject: [ConfigService],

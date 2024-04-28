@@ -13,16 +13,13 @@ import {
 	UsePipes,
 	ValidationPipe,
 } from '@nestjs/common';
-import { JwtData } from 'src/app/decorators/jwt-data.decorator';
 import { ArticleValidationPipe } from 'src/app/pipes/article-validation.pipe';
 import { IdValidationPipe } from 'src/app/pipes/id-validation.pipe';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
-import { UsersService } from 'src/user/users.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { FindProductDto } from './dto/find-product.dto';
 import { Product } from './product.schema';
 import {
-	FAVORITES_NOT_FOUND_ERROR,
 	PRODUCT_DELETE_ERROR,
 	PRODUCT_NOT_FOUND_ERROR,
 	PRODUCT_UPDATE_ERROR,
@@ -31,10 +28,7 @@ import { ProductsService } from './products.service';
 
 @Controller('products')
 export class ProductsController {
-	constructor(
-		private readonly productsService: ProductsService,
-		private readonly usersService: UsersService,
-	) {}
+	constructor(private readonly productsService: ProductsService) {}
 
 	@UsePipes(new ValidationPipe())
 	@Post()
@@ -45,22 +39,6 @@ export class ProductsController {
 	@Get('prices')
 	async getPrices() {
 		return this.productsService.getPrices();
-	}
-
-	@UseGuards(JwtAuthGuard)
-	@Get('favorites')
-	async getUserFavorites(@JwtData() username: string) {
-		const userFavorites = await this.usersService.getUserFavorites(username);
-
-		const favoritesProducts = await this.productsService.findByArticles(
-			userFavorites.favorites,
-		);
-
-		if (favoritesProducts.length === 0) {
-			throw new NotFoundException(FAVORITES_NOT_FOUND_ERROR);
-		}
-
-		return favoritesProducts;
 	}
 
 	@Get('search/:text')
