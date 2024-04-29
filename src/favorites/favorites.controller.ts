@@ -31,11 +31,32 @@ export class FavoritesController {
 	}
 
 	@UseGuards(JwtAuthGuard)
+	@Post('replace')
+	async replaceUserFavorites(
+		@Body() favorites: string[],
+		@JwtData() username: string,
+	) {
+		return this.favoritesService.replaceFavoritesByUsername(
+			favorites,
+			username,
+		);
+	}
+
+	@UseGuards(JwtAuthGuard)
 	@Delete(':article')
 	async deleteUserFavorites(
 		@Param('article') article: string,
 		@JwtData() username: string,
 	) {
 		return this.favoritesService.deleteFavoritesByUsername(article, username);
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@Get('toggle/:article')
+	async toggleUserFavorites(
+		@Param('article') article: string,
+		@JwtData() username: string,
+	) {
+		return this.favoritesService.toggleFavoritesByUsername(article, username);
 	}
 }

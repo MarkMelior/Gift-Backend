@@ -9,6 +9,7 @@ import {
 	Param,
 	Patch,
 	Post,
+	Query,
 	UseGuards,
 	UsePipes,
 	ValidationPipe,
@@ -34,6 +35,13 @@ export class ProductsController {
 	@Post()
 	async create(@Body() dto: CreateProductDto) {
 		return this.productsService.create(dto);
+	}
+
+	@UsePipes(new ValidationPipe())
+	@HttpCode(HttpStatus.OK)
+	@Get('find')
+	async find(@Query() dto: FindProductDto) {
+		return this.productsService.find(dto);
 	}
 
 	@Get('prices')
@@ -80,12 +88,5 @@ export class ProductsController {
 		}
 
 		return updatedProduct;
-	}
-
-	@UsePipes(new ValidationPipe())
-	@HttpCode(HttpStatus.OK)
-	@Post('find')
-	async find(@Body() dto: FindProductDto) {
-		return this.productsService.find(dto);
 	}
 }

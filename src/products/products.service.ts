@@ -48,7 +48,7 @@ export class ProductsService {
 		if (dto.maxPrice !== undefined) {
 			aggregatePipeline.push({
 				$match: {
-					'markets.price': { $lte: dto.maxPrice },
+					'markets.price': { $lte: parseInt(dto.maxPrice) },
 				},
 			});
 		}
@@ -57,14 +57,16 @@ export class ProductsService {
 		if (dto.minPrice !== undefined) {
 			aggregatePipeline.push({
 				$match: {
-					'markets.price': { $gte: dto.minPrice },
+					'markets.price': { $gte: parseInt(dto.minPrice) },
 				},
 			});
 		}
 
 		// Добавление фильтров
-		if (dto.filters && dto.filters.length > 0) {
-			const filterNotMatch = dto.filters.map((filter) => ({
+		if (dto.filters) {
+			// if (dto.filters && dto.filters.length > 0) {
+			// const filterNotMatch = dto.filters.map((filter) => ({
+			const filterNotMatch = dto.filters?.split('-').map((filter) => ({
 				filters: { $nin: [filter] },
 			}));
 			aggregatePipeline.push({
@@ -109,7 +111,7 @@ export class ProductsService {
 		}
 
 		// Добавление лимита
-		aggregatePipeline.push({ $limit: dto.limit });
+		aggregatePipeline.push({ $limit: parseInt(dto.limit) });
 
 		return this.productModel
 			.aggregate(aggregatePipeline)

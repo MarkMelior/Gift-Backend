@@ -1,12 +1,4 @@
-import {
-	IsArray,
-	IsEnum,
-	IsNumber,
-	IsOptional,
-	IsString,
-	Min,
-} from 'class-validator';
-import { FilterSortProps } from '../product.schema';
+import { IsEnum, IsOptional } from 'class-validator';
 
 export enum SortSorting {
 	POPULAR = 'popular',
@@ -18,23 +10,24 @@ export enum SortSorting {
 }
 
 export class FindProductDto {
-	@Min(1)
-	@IsNumber()
-	limit: number;
+	// @Min(1)
+	// @IsNumber()
+	limit: string;
 
 	@IsEnum(SortSorting)
 	sort?: SortSorting = SortSorting.POPULAR;
 
 	@IsOptional()
-	@IsArray()
-	@IsString({ each: true })
-	filters?: FilterSortProps[];
+	// @IsArray()
+	// @IsString({ each: true })
+	// filters?: FilterSortProps[];
+	filters?: string;
 
 	@IsOptional()
-	@IsNumber()
-	maxPrice?: number;
+	// @IsNumber()
+	maxPrice?: string;
 
 	@IsOptional()
-	@IsNumber()
-	minPrice?: number;
+	// @IsNumber()
+	minPrice?: string;
 }

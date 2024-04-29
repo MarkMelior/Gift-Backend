@@ -72,4 +72,60 @@ export class FavoritesService {
 			);
 		}
 	}
+
+	async toggleFavoritesByUsername(article: string, username: string) {
+		try {
+			const user = await this.userModel.findOne({ username });
+
+			if (!user) {
+				throw new NotFoundException(USER_NOT_FOUND_ERROR);
+			}
+
+			let updatedFavorites: string[];
+
+			// Проверяем, есть ли товар уже в избранном
+			if (user.favorites.includes(article)) {
+				// Если товар уже в избранном, удаляем его
+				updatedFavorites = user.favorites.filter((fav) => fav !== article);
+			} else {
+				// Если товар не в избранном, добавляем его
+				updatedFavorites = [...user.favorites, article];
+			}
+
+			// Обновляем избранные товары пользователя
+			const updatedUser = await this.userModel.findOneAndUpdate(
+				{ username },
+				{ favorites: updatedFavorites },
+				{ new: true },
+			);
+
+			if (!updatedUser) {
+				throw new Error('Не удалось обновить избранные товары пользователя');
+			}
+
+			return updatedUser.favorites;
+		} catch (error) {
+			throw new Error(
+				`Ошибка при переключении товара в избранном: ${error.message}`,
+			);
+		}
+	}
+
+	async replaceFavoritesByUsername(favorites: string[], username: string) {
+		try {
+			const updatedUser = await this.userModel.findOneAndUpdate(
+				{ username },
+				{ favorites },
+				{ new: true },
+			);
+
+			if (!updatedUser) {
+				throw new NotFoundException(USER_NOT_FOUND_ERROR);
+			}
+
+			return updatedUser.favorites;
+		} catch (error) {
+			throw new Error(`Ошибка при замене избранных товаров: ${error.message}`);
+		}
+	}
 }
