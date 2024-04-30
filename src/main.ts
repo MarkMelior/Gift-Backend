@@ -1,5 +1,6 @@
 import { UnprocessableEntityException, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app/app.module';
 
 async function bootstrap() {
@@ -8,6 +9,18 @@ async function bootstrap() {
 	app.enableCors();
 
 	app.setGlobalPrefix('api');
+
+	const config = new DocumentBuilder()
+		.setTitle('Gift API')
+		.setVersion('1.0')
+		.addBearerAuth()
+		.build();
+	const document = SwaggerModule.createDocument(app, config);
+	SwaggerModule.setup('swagger', app, document, {
+		swaggerOptions: {
+			persistAuthorization: true,
+		},
+	});
 
 	// Улучшенный формат сообщений об ошибках
 	app.useGlobalPipes(

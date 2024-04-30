@@ -81,6 +81,10 @@ export class FavoritesService {
 				throw new NotFoundException(USER_NOT_FOUND_ERROR);
 			}
 
+			if (!user.favorites) {
+				user.favorites = [];
+			}
+
 			let updatedFavorites: string[];
 
 			// Проверяем, есть ли товар уже в избранном

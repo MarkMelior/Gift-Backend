@@ -24,6 +24,12 @@ export class ConfidentialityProfile {
 
 @Schema({ timestamps: true })
 export class User {
+	@Prop({
+		unique: true,
+		default: () => Math.floor(Math.random() * 900000000) + 100000000,
+	})
+	id: string;
+
 	@Prop({ unique: true })
 	email: string;
 

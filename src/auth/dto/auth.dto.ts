@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
 	IsEmail,
 	IsOptional,
@@ -15,19 +16,23 @@ import {
 
 export class AuthRegisterDto {
 	@IsEmail({}, { message: WRONG_EMAIL })
+	@ApiProperty()
 	email: string;
 
 	@Length(4, 14, { message: WRONG_LENGTH_USERNAME })
 	@IsString()
+	@ApiProperty()
 	username: string;
 
 	@IsOptional()
 	@IsString()
+	@ApiProperty()
 	avatar?: string;
 
 	@MinLength(8, { message: WRONG_MIN_LENGTH_PASSWORD })
 	@MaxLength(32, { message: WRONG_MAX_LENGTH_PASSWORD })
 	@IsString()
+	@ApiProperty()
 	password: string;
 }
 
@@ -43,10 +48,12 @@ export class AuthLoginDto {
 
 	@Length(4, 64)
 	@IsString()
+	@ApiProperty()
 	login: string;
 
 	@MinLength(8, { message: WRONG_MIN_LENGTH_PASSWORD })
 	@MaxLength(32, { message: WRONG_MAX_LENGTH_PASSWORD })
 	@IsString()
+	@ApiProperty()
 	password: string;
 }

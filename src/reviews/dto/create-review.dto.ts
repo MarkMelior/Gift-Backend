@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
 	IsEnum,
 	IsMongoId,
@@ -20,18 +21,22 @@ export class CreateReviewDto {
 	@Max(5, { message: WRONG_RATING })
 	@Min(1, { message: WRONG_RATING })
 	@IsNumber()
+	@ApiProperty()
 	rating: number;
 
 	@MinLength(10, { message: WRONG_MIN_LENGTH_REVIEW })
 	@MaxLength(800, { message: WRONG_MAX_LENGTH_REVIEW })
 	@IsString()
+	@ApiProperty()
 	comment: string;
 
 	@IsString()
 	@IsMongoId()
+	@ApiProperty()
 	userId: string;
 
 	@IsOptional()
 	@IsEnum(ReviewStatus)
+	@ApiProperty()
 	status?: ReviewStatus;
 }

@@ -11,6 +11,7 @@ import {
 	UsePipes,
 	ValidationPipe,
 } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { IdValidationPipe } from '../app/pipes/id-validation.pipe';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { CreateReviewDto } from './dto/create-review.dto';
@@ -19,6 +20,7 @@ import { REVIEW_NOT_FOUND } from './reviews.const';
 import { ReviewsService } from './reviews.service';
 
 @Controller('reviews')
+@ApiTags('reviews')
 export class ReviewsController {
 	constructor(private readonly reviewsService: ReviewsService) {}
 
@@ -29,6 +31,7 @@ export class ReviewsController {
 	}
 
 	@UseGuards(JwtAuthGuard)
+	@ApiBearerAuth()
 	@Delete(':id')
 	async delete(@Param('id', IdValidationPipe) id: string) {
 		const review = await this.reviewsService.delete(id);

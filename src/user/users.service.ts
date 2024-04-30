@@ -16,4 +16,9 @@ export class UsersService {
 			.select({ passwordHash: 0 })
 			.exec();
 	}
+
+	// todo
+	// async getStatistics() {
+
+	// }
 }

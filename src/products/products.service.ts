@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -156,5 +156,27 @@ export class ProductsService {
 			.exec();
 
 		return result.length > 0 ? result[0] : {};
+	}
+
+	async addProductImages(uploadedImages: string[], productArticle: string) {
+		const product = await this.findByArticle(productArticle);
+
+		if (!product) {
+			throw new NotFoundException('Продукт не найден');
+		}
+
+		const updatedImages = [...product.images, ...uploadedImages];
+
+		const updatedProduct = await this.productModel.findOneAndUpdate(
+			{ article: productArticle },
+			{ images: updatedImages },
+			{ new: true },
+		);
+
+		if (!updatedProduct) {
+			throw new NotFoundException('Не удалось обновить продукт');
+		}
+
+		return updatedProduct;
 	}
 }

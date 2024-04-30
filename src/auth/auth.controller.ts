@@ -8,6 +8,7 @@ import {
 	UsePipes,
 	ValidationPipe,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import {
 	ALREADY_REGISTERED_EMAIL_ERROR,
 	ALREADY_REGISTERED_USERNAME_ERROR,
@@ -16,6 +17,7 @@ import { AuthService } from './auth.service';
 import { AuthLoginDto, AuthRegisterDto } from './dto/auth.dto';
 
 @Controller('auth')
+@ApiTags('auth')
 export class AuthController {
 	constructor(private readonly authService: AuthService) {}
 

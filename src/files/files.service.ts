@@ -1,32 +1,49 @@
 import { Injectable } from '@nestjs/common';
 import { path } from 'app-root-path';
-import { format } from 'date-fns';
+import { randomBytes } from 'crypto';
 import { ensureDir, writeFile } from 'fs-extra';
 import * as sharp from 'sharp';
-import { FileElementResponse } from './dto/file-element.response';
-import { MFile } from './files.types';
 
 @Injectable()
 export class FilesService {
-	async saveFiles(files: MFile[]): Promise<FileElementResponse[]> {
-		const dateFolder = format(new Date(), 'yyyy-MM-dd');
-		const uploadFolder = `${path}/uploads/${dateFolder}`;
+	constructor() {}
 
-		await ensureDir(uploadFolder);
-
-		const res: FileElementResponse[] = [];
+	// * products
+	async uploadProductImages(
+		files: Express.Multer.File[],
+		productArticle: string,
+	) {
+		const uploadedFiles: string[] = [];
 
 		for (const file of files) {
-			await writeFile(`${uploadFolder}/${file.originalname}`, file.buffer);
-			res.push({
-				url: `/uploads/${dateFolder}/${file.originalname}`,
-				name: file.originalname,
-			});
+			if (!file.mimetype.includes('image')) {
+				// uploadedFiles.push({
+				// 	name: file.originalname,
+				// 	error: INVALID_IMAGE_FILE_TYPE,
+				// } as Files);
+				continue;
+			}
+
+			const uploadFolder = `${path}/uploads/products/${productArticle}`;
+			await ensureDir(uploadFolder);
+
+			const randomNumber = randomBytes(4).readUInt32BE(0);
+			const fileName = `${randomNumber}.webp`;
+
+			if (!file.mimetype.includes('image/webp')) {
+				const buffer = await this.convertToWebP(file.buffer);
+				await writeFile(`${uploadFolder}/${fileName}`, buffer);
+			} else {
+				await writeFile(`${uploadFolder}/${fileName}`, file.buffer);
+			}
+
+			uploadedFiles.push(fileName);
 		}
 
-		return res;
+		return uploadedFiles;
 	}
 
+	// * utils
 	convertToWebP(file: Buffer): Promise<Buffer> {
 		return sharp(file).webp().toBuffer();
 	}

@@ -5,18 +5,25 @@ import {
 	Get,
 	HttpCode,
 	HttpStatus,
+	MaxFileSizeValidator,
 	NotFoundException,
 	Param,
+	ParseFilePipe,
 	Patch,
 	Post,
 	Query,
+	UploadedFiles,
 	UseGuards,
+	UseInterceptors,
 	UsePipes,
 	ValidationPipe,
 } from '@nestjs/common';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ArticleValidationPipe } from 'src/app/pipes/article-validation.pipe';
 import { IdValidationPipe } from 'src/app/pipes/id-validation.pipe';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
+import { FilesService } from 'src/files/files.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { FindProductDto } from './dto/find-product.dto';
 import { Product } from './product.schema';
@@ -28,8 +35,12 @@ import {
 import { ProductsService } from './products.service';
 
 @Controller('products')
+@ApiTags('products')
 export class ProductsController {
-	constructor(private readonly productsService: ProductsService) {}
+	constructor(
+		private readonly productsService: ProductsService,
+		private readonly filesService: FilesService,
+	) {}
 
 	@UsePipes(new ValidationPipe())
 	@Post()
@@ -66,6 +77,7 @@ export class ProductsController {
 	}
 
 	@UseGuards(JwtAuthGuard)
+	@ApiBearerAuth()
 	@Delete(':id')
 	async delete(@Param('id', IdValidationPipe) id: string) {
 		const deletedProduct = await this.productsService.deleteById(id);
@@ -76,6 +88,7 @@ export class ProductsController {
 	}
 
 	@UseGuards(JwtAuthGuard)
+	@ApiBearerAuth()
 	@Patch(':id')
 	async update(
 		@Param('id', IdValidationPipe) id: string,
@@ -88,5 +101,32 @@ export class ProductsController {
 		}
 
 		return updatedProduct;
+	}
+
+	@Patch('images/:productArticle')
+	@HttpCode(HttpStatus.OK)
+	@UseGuards(JwtAuthGuard)
+	@ApiBearerAuth()
+	@UseInterceptors(FilesInterceptor('images'))
+	async uploadProducts(
+		@UploadedFiles(
+			new ParseFilePipe({
+				validators: [new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 20 })],
+			}),
+		)
+		files: Express.Multer.File[],
+		@Param('productArticle', ArticleValidationPipe) productArticle: string,
+	) {
+		const uploadedImages = await this.filesService.uploadProductImages(
+			files,
+			productArticle,
+		);
+
+		const response = await this.productsService.addProductImages(
+			uploadedImages,
+			productArticle,
+		);
+
+		return response;
 	}
 }
