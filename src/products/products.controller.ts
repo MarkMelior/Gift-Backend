@@ -42,10 +42,12 @@ export class ProductsController {
 		private readonly filesService: FilesService,
 	) {}
 
-	@UsePipes(new ValidationPipe())
 	@Post()
+	@UsePipes(new ValidationPipe())
+	@UseGuards(JwtAuthGuard)
+	@ApiBearerAuth()
 	async create(@Body() dto: CreateProductDto) {
-		return this.productsService.create(dto);
+		return await this.productsService.create(dto);
 	}
 
 	@UsePipes(new ValidationPipe())
@@ -103,7 +105,7 @@ export class ProductsController {
 		return updatedProduct;
 	}
 
-	@Patch('images/:productArticle')
+	@Post('images/:productArticle')
 	@HttpCode(HttpStatus.OK)
 	@UseGuards(JwtAuthGuard)
 	@ApiBearerAuth()
@@ -125,6 +127,25 @@ export class ProductsController {
 		const response = await this.productsService.addProductImages(
 			uploadedImages,
 			productArticle,
+		);
+
+		return response;
+	}
+
+	@Delete('images/:productArticle/:images')
+	@UseGuards(JwtAuthGuard)
+	@ApiBearerAuth()
+	async deleteProductImages(
+		@Param('productArticle') productArticle: string,
+		@Param('images') images: string,
+	) {
+		const imagesArray = images.split(',');
+
+		await this.filesService.deleteProductImages(productArticle, imagesArray);
+
+		const response = await this.productsService.deleteImages(
+			productArticle,
+			imagesArray,
 		);
 
 		return response;

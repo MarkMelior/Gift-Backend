@@ -177,6 +177,31 @@ export class ProductsService {
 			throw new NotFoundException('Не удалось обновить продукт');
 		}
 
-		return updatedProduct;
+		return updatedProduct.images;
+	}
+
+	async deleteImages(productArticle: string, images: string[]) {
+		const product = await this.findByArticle(productArticle);
+
+		if (!product) {
+			throw new NotFoundException('Продукт не найден');
+		}
+
+		// Фильтруем массив изображений, оставляя только те, которые не нужно удалить
+		const updatedImages = product.images.filter(
+			(image) => !images.includes(image),
+		);
+
+		const updatedProduct = await this.productModel.findOneAndUpdate(
+			{ article: productArticle },
+			{ images: updatedImages },
+			{ new: true },
+		);
+
+		if (!updatedProduct) {
+			throw new NotFoundException('Не удалось обновить продукт');
+		}
+
+		return updatedProduct.images;
 	}
 }

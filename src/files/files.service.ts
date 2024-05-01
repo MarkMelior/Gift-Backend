@@ -1,14 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { path } from 'app-root-path';
 import { randomBytes } from 'crypto';
 import { ensureDir, writeFile } from 'fs-extra';
+import { unlink } from 'fs/promises';
 import * as sharp from 'sharp';
 
 @Injectable()
 export class FilesService {
 	constructor() {}
 
-	// * products
 	async uploadProductImages(
 		files: Express.Multer.File[],
 		productArticle: string,
@@ -17,10 +17,7 @@ export class FilesService {
 
 		for (const file of files) {
 			if (!file.mimetype.includes('image')) {
-				// uploadedFiles.push({
-				// 	name: file.originalname,
-				// 	error: INVALID_IMAGE_FILE_TYPE,
-				// } as Files);
+				// todo error
 				continue;
 			}
 
@@ -43,7 +40,27 @@ export class FilesService {
 		return uploadedFiles;
 	}
 
-	// * utils
+	async deleteProductImages(productArticle: string, images: string[]) {
+		const deleteFolder = `${path}/uploads/products/${productArticle}`;
+
+		for (const imageName of images) {
+			const imagePath = `${deleteFolder}/${imageName}`;
+
+			try {
+				await unlink(imagePath);
+			} catch (error) {
+				console.error(`Не удалось удалить файл ${imagePath}:`, error);
+				throw new ForbiddenException(`Не удалось удалить файл ${imagePath}`);
+			}
+		}
+
+		return images;
+	}
+
+	// async deleteProductAllImages(productArticle: string) {
+
+	// }
+
 	convertToWebP(file: Buffer): Promise<Buffer> {
 		return sharp(file).webp().toBuffer();
 	}
