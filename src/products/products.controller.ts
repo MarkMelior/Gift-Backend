@@ -42,9 +42,18 @@ export class ProductsController {
 
 	@Post()
 	@UseGuards(JwtAuthGuard)
+	@UseInterceptors(FilesInterceptor('images'))
 	@ApiBearerAuth()
-	async create(@Body() dto: CreateProductDto) {
-		return await this.productsService.create(dto);
+	async create(
+		@UploadedFiles(
+			new ParseFilePipe({
+				validators: [new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 20 })],
+			}),
+		)
+		files: Express.Multer.File[],
+		@Body() dto: { body: string },
+	) {
+		return await this.productsService.create(dto.body, files);
 	}
 
 	@HttpCode(HttpStatus.OK)

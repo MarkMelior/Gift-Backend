@@ -31,8 +31,8 @@ export type SortSorting = z.infer<typeof SortSortingEnum>;
 export type SortFilters = z.infer<typeof SortFiltersEnums>;
 export type MarketType = z.infer<typeof MarketTypeEnum>;
 
-const CharacteristicsSchema = z.record(
-	z.union([z.string(), z.array(z.string())]),
+export const CharacteristicsSchema = z.record(
+	z.union([z.string(), z.array(z.string()), z.record(z.string())]),
 );
 
 export const ProductMarketsSchema = z.object({
@@ -51,6 +51,13 @@ export const ProductCreateRequestSchema = z.object({
 	characteristics: CharacteristicsSchema.optional(),
 	markets: z.array(ProductMarketsSchema).min(1),
 	seoText: z.string().optional(),
+	images: z.array(z.string()).min(1).optional(),
+	article: z
+		.string()
+		.min(9)
+		.max(9)
+		.default(String(Math.floor(Math.random() * 900000000) + 100000000))
+		.optional(),
 });
 
 export const ProductFindRequestSchema = z.object({

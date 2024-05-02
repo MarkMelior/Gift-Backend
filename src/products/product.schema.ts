@@ -21,10 +21,7 @@ export class Product {
 	@Prop({ type: () => [typeof ProductMarketsSchema] })
 	markets: (typeof ProductMarketsSchema)[];
 
-	@Prop({
-		unique: true,
-		default: () => Math.floor(Math.random() * 900000000) + 100000000,
-	})
+	@Prop({ unique: true })
 	article: string;
 
 	@Prop()

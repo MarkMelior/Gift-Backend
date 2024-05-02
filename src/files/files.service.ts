@@ -1,8 +1,13 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+	ForbiddenException,
+	Injectable,
+	InternalServerErrorException,
+	NotFoundException,
+} from '@nestjs/common';
 import { path } from 'app-root-path';
 import { randomBytes } from 'crypto';
 import { ensureDir, writeFile } from 'fs-extra';
-import { unlink } from 'fs/promises';
+import { rmdir, unlink } from 'fs/promises';
 import * as sharp from 'sharp';
 
 @Injectable()
@@ -49,7 +54,6 @@ export class FilesService {
 			try {
 				await unlink(imagePath);
 			} catch (error) {
-				console.error(`Не удалось удалить файл ${imagePath}:`, error);
 				throw new ForbiddenException(`Не удалось удалить файл ${imagePath}`);
 			}
 		}
@@ -57,9 +61,23 @@ export class FilesService {
 		return images;
 	}
 
-	// async deleteProductAllImages(productArticle: string) {
+	async deleteAllProductImages(productArticle: string) {
+		const deleteFolder = `${path}/uploads/products/${productArticle}`;
 
-	// }
+		try {
+			await rmdir(deleteFolder);
+		} catch (error) {
+			if (error.code === 'ENOENT') {
+				throw new NotFoundException(
+					`Папка с изображениями продукта ${productArticle} не найдена`,
+				);
+			} else {
+				throw new InternalServerErrorException(
+					`Не удалось удалить изображения продукта ${productArticle}`,
+				);
+			}
+		}
+	}
 
 	convertToWebP(file: Buffer): Promise<Buffer> {
 		return sharp(file).webp().toBuffer();

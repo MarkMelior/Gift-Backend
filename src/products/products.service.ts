@@ -1,7 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+	BadRequestException,
+	Injectable,
+	NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { SortSortingEnum } from 'src/app/contracts/commands';
+import {
+	ProductCreateRequestSchema,
+	SortSortingEnum,
+} from 'src/app/contracts/commands';
+import { FilesService } from 'src/files/files.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { FindProductDto } from './dto/find-product.dto';
 import { Product } from './product.schema';
@@ -12,11 +20,37 @@ export class ProductsService {
 	constructor(
 		@InjectModel(Product.name)
 		private readonly productModel: Model<Product>,
+
+		private readonly filesService: FilesService,
 	) {}
 
-	async create(dto: CreateProductDto) {
-		const createdProduct = await this.productModel.create(dto);
-		return createdProduct;
+	async create(dto: string, files: Express.Multer.File[]) {
+		if (!dto) {
+			throw new BadRequestException('Отсутствует тело запроса body');
+		}
+
+		const article = String(Math.floor(Math.random() * 900000000) + 100000000);
+
+		const validationResult = ProductCreateRequestSchema.safeParse(
+			JSON.parse(dto),
+		);
+
+		if (validationResult.success) {
+			const uploadedImages = await this.filesService.uploadProductImages(
+				files,
+				article,
+			);
+
+			const request: CreateProductDto = {
+				...validationResult.data,
+				article,
+				images: uploadedImages,
+			};
+
+			return await this.productModel.create(request);
+		} else {
+			throw new BadRequestException(validationResult.error);
+		}
 	}
 
 	async findById(id: string) {
