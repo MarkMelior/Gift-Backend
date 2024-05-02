@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { UserRole } from 'src/app/contracts';
 
 export type Country = string; // TODO
 
@@ -11,11 +12,6 @@ export enum Status {
 	AWAY,
 }
 export type ConfidentialityParams = 'private' | 'public' | 'friend';
-
-export enum UserRole {
-	ADMIN = 'admin',
-	MANAGER = 'manager',
-}
 
 export class ConfidentialityProfile {
 	@Prop()
@@ -60,12 +56,8 @@ export class User {
 	@Prop()
 	confidentiality?: ConfidentialityProfile;
 
-	@Prop({ type: () => [UserRole] })
+	@Prop({ type: () => [String] })
 	roles?: UserRole[];
-
-	// * for game
-	// @Prop({ default: Status.ONLINE, type: () => Number, enum: Status })
-	// status: Status;
 
 	@Prop()
 	gameId?: string;

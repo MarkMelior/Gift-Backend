@@ -1,12 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Types } from 'mongoose';
-
-export enum ReviewStatus {
-	PENDING,
-	ACCEPTED,
-	REJECTED,
-	MAIN,
-}
+import { ReviewStatus, ReviewStatusSchema } from 'src/app/contracts/commands';
 
 @Schema({ timestamps: true })
 export class Review {
@@ -17,9 +11,9 @@ export class Review {
 	comment: string;
 
 	@Prop({
-		default: ReviewStatus.PENDING,
-		type: () => ReviewStatus,
-		enum: ReviewStatus,
+		default: ReviewStatusSchema.Enum.pending,
+		type: () => ReviewStatusSchema.Enum,
+		enum: ReviewStatusSchema.Enum,
 	})
 	status: ReviewStatus;
 

@@ -8,14 +8,12 @@ import {
 	Param,
 	Post,
 	UseGuards,
-	UsePipes,
-	ValidationPipe,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ReviewStatus } from 'src/app/contracts';
 import { IdValidationPipe } from '../app/pipes/id-validation.pipe';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { CreateReviewDto } from './dto/create-review.dto';
-import { ReviewStatus } from './review.schema';
 import { REVIEW_NOT_FOUND } from './reviews.const';
 import { ReviewsService } from './reviews.service';
 
@@ -24,7 +22,6 @@ import { ReviewsService } from './reviews.service';
 export class ReviewsController {
 	constructor(private readonly reviewsService: ReviewsService) {}
 
-	@UsePipes(new ValidationPipe())
 	@Post()
 	async create(@Body() dto: CreateReviewDto) {
 		return this.reviewsService.create(dto);
@@ -47,10 +44,8 @@ export class ReviewsController {
 	}
 
 	@Get('byStatus/:status')
-	async getByStatus(@Param('status') status: string) {
-		const reviews = this.reviewsService.findByStatus(
-			parseInt(status) as ReviewStatus,
-		);
+	async getByStatus(@Param('status') status: ReviewStatus) {
+		const reviews = this.reviewsService.findByStatus(status);
 		return reviews;
 	}
 }

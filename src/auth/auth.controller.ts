@@ -5,8 +5,6 @@ import {
 	HttpCode,
 	HttpStatus,
 	Post,
-	UsePipes,
-	ValidationPipe,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import {
@@ -21,7 +19,6 @@ import { AuthLoginDto, AuthRegisterDto } from './dto/auth.dto';
 export class AuthController {
 	constructor(private readonly authService: AuthService) {}
 
-	@UsePipes(new ValidationPipe())
 	@Post('register')
 	async register(@Body() dto: AuthRegisterDto) {
 		const oldEmail = await this.authService.findUserByEmail(dto.email);
@@ -38,7 +35,6 @@ export class AuthController {
 		return this.authService.createUser(dto);
 	}
 
-	@UsePipes(new ValidationPipe())
 	@HttpCode(HttpStatus.OK)
 	@Post('login')
 	async login(@Body() { login, password }: AuthLoginDto) {

@@ -1,17 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { MarketsProductDto } from './dto/markets-product.dto';
-
-export enum Currency {
-	RUB = 'RUB',
-	USD = 'USD',
-	EUR = 'EUR',
-}
-
-export type SortCategory = 'birthday' | 'love' | 'year' | 'joke';
-export type SortSex = 'male' | 'female';
-export type SortAge = 'kid' | 'adult' | 'old';
-
-export type FilterSortProps = SortCategory | SortSex | SortAge;
+import { ProductMarketsSchema, SortFilters } from 'src/app/contracts/commands';
 
 @Schema({ timestamps: true })
 export class Product {
@@ -25,13 +13,13 @@ export class Product {
 	creativity: number;
 
 	@Prop({ type: () => [String] })
-	filters: FilterSortProps[];
+	filters: SortFilters[];
 
 	@Prop({ _id: false, type: () => Object })
 	characteristics: Record<string, string[] | Record<string, string>>;
 
-	@Prop({ type: () => [MarketsProductDto] })
-	markets: MarketsProductDto[];
+	@Prop({ type: () => [typeof ProductMarketsSchema] })
+	markets: (typeof ProductMarketsSchema)[];
 
 	@Prop({
 		unique: true,

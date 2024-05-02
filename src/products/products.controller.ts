@@ -15,18 +15,16 @@ import {
 	UploadedFiles,
 	UseGuards,
 	UseInterceptors,
-	UsePipes,
-	ValidationPipe,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ProductCardResponse, ProductPricesResponse } from 'src/app/contracts';
 import { ArticleValidationPipe } from 'src/app/pipes/article-validation.pipe';
 import { IdValidationPipe } from 'src/app/pipes/id-validation.pipe';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { FilesService } from 'src/files/files.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { FindProductDto } from './dto/find-product.dto';
-import { Product } from './product.schema';
 import {
 	PRODUCT_DELETE_ERROR,
 	PRODUCT_NOT_FOUND_ERROR,
@@ -43,22 +41,20 @@ export class ProductsController {
 	) {}
 
 	@Post()
-	@UsePipes(new ValidationPipe())
 	@UseGuards(JwtAuthGuard)
 	@ApiBearerAuth()
 	async create(@Body() dto: CreateProductDto) {
 		return await this.productsService.create(dto);
 	}
 
-	@UsePipes(new ValidationPipe())
 	@HttpCode(HttpStatus.OK)
 	@Get('find')
-	async find(@Query() dto: FindProductDto) {
+	async find(@Query() dto: FindProductDto): Promise<ProductCardResponse[]> {
 		return this.productsService.find(dto);
 	}
 
 	@Get('prices')
-	async getPrices() {
+	async getPrices(): Promise<ProductPricesResponse> {
 		return this.productsService.getPrices();
 	}
 
@@ -94,7 +90,7 @@ export class ProductsController {
 	@Patch(':id')
 	async update(
 		@Param('id', IdValidationPipe) id: string,
-		@Body() dto: Product,
+		@Body() dto: CreateProductDto,
 	) {
 		const updatedProduct = await this.productsService.updateById(id, dto);
 
@@ -136,7 +132,7 @@ export class ProductsController {
 	@UseGuards(JwtAuthGuard)
 	@ApiBearerAuth()
 	async deleteProductImages(
-		@Param('productArticle') productArticle: string,
+		@Param('productArticle', ArticleValidationPipe) productArticle: string,
 		@Param('images') images: string,
 	) {
 		const imagesArray = images.split(',');

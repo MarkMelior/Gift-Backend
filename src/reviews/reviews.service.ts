@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { ReviewStatus } from 'src/app/contracts/commands';
 import { CreateReviewDto } from './dto/create-review.dto';
-import { Review, ReviewStatus } from './review.schema';
+import { Review } from './review.schema';
 
 @Injectable()
 export class ReviewsService {

@@ -1,8 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { SortSortingEnum } from 'src/app/contracts/commands';
 import { CreateProductDto } from './dto/create-product.dto';
-import { FindProductDto, SortSorting } from './dto/find-product.dto';
+import { FindProductDto } from './dto/find-product.dto';
 import { Product } from './product.schema';
 import { PRODUCTS_CARD_DTO } from './products.const';
 
@@ -79,27 +80,27 @@ export class ProductsService {
 		// Добавление сортировки
 		if (dto.sort) {
 			switch (dto.sort) {
-				case SortSorting.POPULAR:
+				case SortSortingEnum.Enum.popular:
 					// Сортировка по популярности
 					aggregatePipeline.push({ $sort: { reviewCount: -1 } });
 					break;
-				case SortSorting.RATING:
+				case SortSortingEnum.Enum.rating:
 					// Сортировка по рейтингу
 					aggregatePipeline.push({ $sort: { 'markets.rating': -1 } });
 					break;
-				case SortSorting.CREATIVITY:
+				case SortSortingEnum.Enum.creativity:
 					// Сортировка по креативности
 					aggregatePipeline.push({ $sort: { creativity: -1 } });
 					break;
-				case SortSorting.EXPENSIVE:
+				case SortSortingEnum.Enum.expensive:
 					// Сортировка по убыванию цены
 					aggregatePipeline.push({ $sort: { 'markets.price': -1 } });
 					break;
-				case SortSorting.CHEAP:
+				case SortSortingEnum.Enum.cheap:
 					// Сортировка по возрастанию цены
 					aggregatePipeline.push({ $sort: { 'markets.price': 1 } });
 					break;
-				case SortSorting.NEW:
+				case SortSortingEnum.Enum.new:
 					// Сортировка по новизне
 					aggregatePipeline.push({ $sort: { createdAt: -1 } });
 					break;

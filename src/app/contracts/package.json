@@ -1,0 +1,14 @@
+{
+	"name": "@melior-gift/zod-contracts",
+	"version": "1.2.2",
+	"description": "",
+	"main": "./build/index.js",
+	"scripts": {
+		"prepublish": "del /q /s build && tsc"
+	},
+	"author": "Mark Melior",
+	"license": "ISC",
+	"dependencies": {
+		"zod": "^3.23.5"
+	}
+}
