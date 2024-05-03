@@ -79,8 +79,17 @@ export class ProductsService {
 	async find(dto: FindProductDto) {
 		const aggregatePipeline = [];
 
+		// Поиск по артикулам продуктов
+		if (dto.articles) {
+			aggregatePipeline.push({
+				$match: {
+					article: { $in: dto.articles.split(',') },
+				},
+			});
+		}
+
 		// Фильтрация по максимальной цене
-		if (dto.maxPrice !== undefined) {
+		if (dto.maxPrice) {
 			aggregatePipeline.push({
 				$match: {
 					'markets.price': { $lte: parseInt(dto.maxPrice) },
@@ -89,7 +98,7 @@ export class ProductsService {
 		}
 
 		// Фильтрация по минимальной цене
-		if (dto.minPrice !== undefined) {
+		if (dto.minPrice) {
 			aggregatePipeline.push({
 				$match: {
 					'markets.price': { $gte: parseInt(dto.minPrice) },
@@ -98,10 +107,8 @@ export class ProductsService {
 		}
 
 		// Добавление фильтров
-		if (dto.filters) {
-			// if (dto.filters && dto.filters.length > 0) {
-			// const filterNotMatch = dto.filters.map((filter) => ({
-			const filterNotMatch = dto.filters?.split('-').map((filter) => ({
+		if (dto.filters && dto.filters.length > 0) {
+			const filterNotMatch = dto.filters.map((filter) => ({
 				filters: { $nin: [filter] },
 			}));
 			aggregatePipeline.push({
