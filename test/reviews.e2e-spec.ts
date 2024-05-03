@@ -3,8 +3,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Types } from 'mongoose';
 import * as request from 'supertest';
 import { AppModule } from '../src/app/app.module';
-import { AuthLoginDto } from '../src/auth/dto/auth.dto';
-import { CreateReviewDto } from '../src/reviews/dto/create-review.dto';
+import { AuthLoginDto } from '../src/auth/auth.dto';
+import { ReviewCreateDto } from '../src/reviews/review.dto';
 import { ReviewStatus } from '../src/reviews/review.schema';
 import { REVIEW_NOT_FOUND } from '../src/reviews/reviews.const';
 
@@ -15,7 +15,7 @@ const loginDto: AuthLoginDto = {
 	password: '12345678',
 };
 
-const testDto: CreateReviewDto = {
+const testDto: ReviewCreateDto = {
 	rating: 5,
 	comment: 'Комментарий',
 	userId,

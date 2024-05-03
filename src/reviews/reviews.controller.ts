@@ -3,49 +3,38 @@ import {
 	Controller,
 	Delete,
 	Get,
-	HttpException,
-	HttpStatus,
 	Param,
 	Post,
+	Query,
 	UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { ReviewStatus } from 'src/app/contracts';
 import { IdValidationPipe } from '../app/pipes/id-validation.pipe';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
-import { CreateReviewDto } from './dto/create-review.dto';
-import { REVIEW_NOT_FOUND } from './reviews.const';
+import { ReviewCreateDto, ReviewsFindDto } from './review.dto';
 import { ReviewsService } from './reviews.service';
 
-@Controller('reviews')
 @ApiTags('reviews')
+@Controller('reviews')
 export class ReviewsController {
 	constructor(private readonly reviewsService: ReviewsService) {}
 
-	@Post()
-	async create(@Body() dto: CreateReviewDto) {
-		return this.reviewsService.create(dto);
-	}
-
-	@UseGuards(JwtAuthGuard)
 	@ApiBearerAuth()
+	@UseGuards(JwtAuthGuard)
+	@Post()
+	async createReview(@Body() dto: ReviewCreateDto) {
+		return this.reviewsService.createReview(dto);
+	}
+
+	@ApiBearerAuth()
+	@UseGuards(JwtAuthGuard)
 	@Delete(':id')
-	async delete(@Param('id', IdValidationPipe) id: string) {
-		const review = await this.reviewsService.delete(id);
-
-		if (!review) {
-			throw new HttpException(REVIEW_NOT_FOUND, HttpStatus.NOT_FOUND);
-		}
+	async deleteReview(@Param('id', IdValidationPipe) id: string) {
+		return this.reviewsService.deleteReview(id);
 	}
 
-	@Get('byUser/:id')
-	async getByUserId(@Param('id', IdValidationPipe) id: string) {
-		return this.reviewsService.findByUserId(id);
-	}
-
-	@Get('byStatus/:status')
-	async getByStatus(@Param('status') status: ReviewStatus) {
-		const reviews = this.reviewsService.findByStatus(status);
-		return reviews;
+	@Get()
+	async findReviews(@Query() dto: ReviewsFindDto) {
+		return this.reviewsService.findReviews(dto);
 	}
 }

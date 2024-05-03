@@ -6,7 +6,7 @@ import {
 	USER_NOT_FOUND_EMAIL_ERROR,
 	WRONG_PASSWORD_ERROR,
 } from '../src/auth/auth.const';
-import { AuthLoginDto } from '../src/auth/dto/auth.dto';
+import { AuthLoginDto } from '../src/auth/auth.dto';
 
 const loginDto: AuthLoginDto = {
 	email: 'markus@g.com',

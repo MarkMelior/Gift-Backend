@@ -18,7 +18,5 @@ export class UsersService {
 	}
 
 	// todo
-	// async getStatistics() {
-
-	// }
+	// async getStatistics() {}
 }

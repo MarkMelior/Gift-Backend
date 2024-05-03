@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { StringToNumber } from '../../utils/string-to-number';
 
 export const SortCategoryEnum = z.enum(['birthday', 'love', 'year', 'joke']);
 export const SortSexEnum = z.enum(['male', 'female']);
@@ -61,9 +62,13 @@ export const ProductCreateRequestSchema = z.object({
 });
 
 export const ProductFindRequestSchema = z.object({
-	limit: z.string(),
-	articles: z.string().optional(),
+	limit: StringToNumber.default(20),
+	articles: z
+		.string()
+		.transform((value) => value.split(','))
+		.optional(),
 	sort: SortSortingEnum.default('popular').optional(),
+	param: z.string().optional(),
 	filters: z
 		.string()
 		.transform((value) => value.split('-'))
@@ -83,8 +88,8 @@ export const ProductFindRequestSchema = z.object({
 			},
 		)
 		.optional(),
-	maxPrice: z.string().optional(),
-	minPrice: z.string().optional(),
+	maxPrice: StringToNumber.optional(),
+	minPrice: StringToNumber.optional(),
 });
 
 export type ProductCreateRequest = z.infer<typeof ProductCreateRequestSchema>;

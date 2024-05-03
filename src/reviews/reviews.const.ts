@@ -7,3 +7,11 @@ export const WRONG_MIN_LENGTH_REVIEW =
 
 export const WRONG_MAX_LENGTH_REVIEW =
 	'Максимальная длинна комментария 800 символов';
+
+// export const REVIEWS_DTO = {
+// _id: 0,
+// images: { $slice: ['$images', 5] },
+// title: 1,
+// markets: { $slice: ['$markets', 1] },
+// article: 1,
+// };

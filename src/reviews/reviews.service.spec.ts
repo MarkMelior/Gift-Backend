@@ -34,7 +34,7 @@ describe('ReviewsService', () => {
 		reviewRepositoryFactory()
 			.find()
 			.exec.mockReturnValueOnce([{ userId: id }]);
-		const res = await service.findByUserId(id);
+		const res = await service.findReviewByUserId(id);
 		expect(res[0].userId).toBe(id);
 	});
 

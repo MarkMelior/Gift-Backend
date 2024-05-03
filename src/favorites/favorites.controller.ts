@@ -6,6 +6,7 @@ import {
 	Param,
 	Patch,
 	Post,
+	Put,
 	UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -13,20 +14,20 @@ import { JwtData } from 'src/app/decorators/jwt-data.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { FavoritesService } from './favorites.service';
 
-@Controller('favorites')
 @ApiTags('favorites')
+@Controller('favorites')
 export class FavoritesController {
 	constructor(private readonly favoritesService: FavoritesService) {}
 
-	@UseGuards(JwtAuthGuard)
 	@ApiBearerAuth()
+	@UseGuards(JwtAuthGuard)
 	@Get()
 	async getUserFavorites(@JwtData() username: string) {
 		return this.favoritesService.findFavoritesByUsername(username);
 	}
 
-	@UseGuards(JwtAuthGuard)
 	@ApiBearerAuth()
+	@UseGuards(JwtAuthGuard)
 	@Post()
 	async addUserFavorites(
 		@Body() favorites: string[],
@@ -35,9 +36,9 @@ export class FavoritesController {
 		return this.favoritesService.addFavoritesByUsername(favorites, username);
 	}
 
-	@UseGuards(JwtAuthGuard)
 	@ApiBearerAuth()
-	@Post('replace')
+	@UseGuards(JwtAuthGuard)
+	@Put()
 	async replaceUserFavorites(
 		@Body() favorites: string[],
 		@JwtData() username: string,
@@ -48,23 +49,23 @@ export class FavoritesController {
 		);
 	}
 
-	@UseGuards(JwtAuthGuard)
 	@ApiBearerAuth()
-	@Delete(':article')
-	async deleteUserFavorites(
-		@Param('article') article: string,
-		@JwtData() username: string,
-	) {
-		return this.favoritesService.deleteFavoritesByUsername(article, username);
-	}
-
 	@UseGuards(JwtAuthGuard)
-	@ApiBearerAuth()
 	@Patch('toggle/:article')
 	async toggleUserFavorites(
 		@Param('article') article: string,
 		@JwtData() username: string,
 	) {
 		return this.favoritesService.toggleFavoritesByUsername(article, username);
+	}
+
+	@ApiBearerAuth()
+	@UseGuards(JwtAuthGuard)
+	@Delete(':article')
+	async deleteUserFavorites(
+		@Param('article') article: string,
+		@JwtData() username: string,
+	) {
+		return this.favoritesService.deleteFavoritesByUsername(article, username);
 	}
 }

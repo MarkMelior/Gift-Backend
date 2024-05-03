@@ -10,10 +10,14 @@ import {
 	SortSortingEnum,
 } from 'src/app/contracts/commands';
 import { FilesService } from 'src/files/files.service';
-import { CreateProductDto } from './dto/create-product.dto';
-import { FindProductDto } from './dto/find-product.dto';
+import { ProductCreateDto, ProductsFindDto } from './product.dto';
 import { Product } from './product.schema';
-import { PRODUCTS_CARD_DTO } from './products.const';
+import {
+	PRODUCTS_CARD_DTO,
+	PRODUCT_DELETE_ERROR,
+	PRODUCT_NOT_FOUND_ERROR,
+	PRODUCT_UPDATE_ERROR,
+} from './products.const';
 
 @Injectable()
 export class ProductsService {
@@ -24,7 +28,7 @@ export class ProductsService {
 		private readonly filesService: FilesService,
 	) {}
 
-	async create(dto: string, files: Express.Multer.File[]) {
+	async createProduct(dto: string, files: Express.Multer.File[]) {
 		if (!dto) {
 			throw new BadRequestException('Отсутствует тело запроса body');
 		}
@@ -41,49 +45,79 @@ export class ProductsService {
 				article,
 			);
 
-			const request: CreateProductDto = {
+			const request: ProductCreateDto = {
 				...validationResult.data,
 				article,
 				images: uploadedImages,
 			};
 
-			return await this.productModel.create(request);
+			return this.productModel.create(request);
 		} else {
 			throw new BadRequestException(validationResult.error);
 		}
 	}
 
-	async findById(id: string) {
-		return this.productModel.findById(id).exec();
+	async updateProduct(article: string, dto: ProductCreateDto) {
+		const updatedProduct = await this.productModel
+			.findOneAndUpdate({ article }, dto, { new: true })
+			.exec();
+
+		if (!updatedProduct) {
+			throw new NotFoundException(PRODUCT_UPDATE_ERROR);
+		}
+
+		return updatedProduct;
 	}
 
-	async findByArticle(article: string) {
-		return this.productModel.findOne({ article }).exec();
+	async deleteProduct(article: string) {
+		const deletedProduct = this.productModel
+			.findOneAndDelete({ article })
+			.exec();
+
+		if (!deletedProduct) {
+			throw new NotFoundException(PRODUCT_DELETE_ERROR);
+		}
+
+		return deletedProduct;
 	}
 
-	async findByArticles(articles: string[]) {
+	async findProductByArticle(article: string) {
+		const product = await this.productModel.findOne({ article }).exec();
+
+		if (!product) {
+			throw new NotFoundException(PRODUCT_NOT_FOUND_ERROR);
+		}
+
+		return product;
+	}
+
+	async findProductsByArticles(articles: string[]) {
 		return this.productModel
 			.find({ article: { $in: articles } })
 			.select(PRODUCTS_CARD_DTO)
 			.exec();
 	}
 
-	async deleteById(id: string) {
-		return this.productModel.findByIdAndDelete(id).exec();
-	}
-
-	async updateById(id: string, dto: CreateProductDto) {
-		return this.productModel.findByIdAndUpdate(id, dto, { new: true }).exec();
-	}
-
-	async find(dto: FindProductDto) {
+	async findProducts(dto: ProductsFindDto) {
 		const aggregatePipeline = [];
+
+		// Поиск по param
+		if (dto.param) {
+			aggregatePipeline.push({
+				$match: {
+					$or: [
+						{ title: { $regex: dto.param, $options: 'i' } },
+						{ seoText: { $regex: dto.param, $options: 'i' } },
+					],
+				},
+			});
+		}
 
 		// Поиск по артикулам продуктов
 		if (dto.articles) {
 			aggregatePipeline.push({
 				$match: {
-					article: { $in: dto.articles.split(',') },
+					article: { $in: dto.articles },
 				},
 			});
 		}
@@ -92,7 +126,7 @@ export class ProductsService {
 		if (dto.maxPrice) {
 			aggregatePipeline.push({
 				$match: {
-					'markets.price': { $lte: parseInt(dto.maxPrice) },
+					'markets.price': { $lte: dto.maxPrice },
 				},
 			});
 		}
@@ -101,7 +135,7 @@ export class ProductsService {
 		if (dto.minPrice) {
 			aggregatePipeline.push({
 				$match: {
-					'markets.price': { $gte: parseInt(dto.minPrice) },
+					'markets.price': { $gte: dto.minPrice },
 				},
 			});
 		}
@@ -153,7 +187,7 @@ export class ProductsService {
 		}
 
 		// Добавление лимита
-		aggregatePipeline.push({ $limit: parseInt(dto.limit) });
+		aggregatePipeline.push({ $limit: dto.limit });
 
 		return this.productModel
 			.aggregate(aggregatePipeline)
@@ -161,89 +195,77 @@ export class ProductsService {
 			.exec();
 	}
 
-	async findByText(text: string) {
-		return this.productModel
-			.find({
-				$or: [
-					{ title: { $regex: text, $options: 'i' } },
-					{ seoText: { $regex: text, $options: 'i' } },
-				],
-			})
-			.exec();
-	}
+	// async getPrices() {
+	// 	const result = await this.productModel
+	// 		.aggregate([
+	// 			{
+	// 				$unwind: '$markets',
+	// 			},
+	// 			{
+	// 				$group: {
+	// 					_id: null,
+	// 					minPrice: { $min: '$markets.price' },
+	// 					maxPrice: { $max: '$markets.price' },
+	// 					avgPrice: { $avg: '$markets.price' },
+	// 				},
+	// 			},
+	// 			{
+	// 				$project: {
+	// 					_id: 0,
+	// 					minPrice: 1,
+	// 					maxPrice: 1,
+	// 					avgPrice: 1,
+	// 				},
+	// 			},
+	// 		])
+	// 		.exec();
 
-	async getPrices() {
-		const result = await this.productModel
-			.aggregate([
-				{
-					$unwind: '$markets',
-				},
-				{
-					$group: {
-						_id: null,
-						minPrice: { $min: '$markets.price' },
-						maxPrice: { $max: '$markets.price' },
-						avgPrice: { $avg: '$markets.price' },
-					},
-				},
-				{
-					$project: {
-						_id: 0,
-						minPrice: 1,
-						maxPrice: 1,
-						avgPrice: 1,
-					},
-				},
-			])
-			.exec();
+	// 	return result.length > 0 ? result[0] : {};
+	// }
 
-		return result.length > 0 ? result[0] : {};
-	}
+	// async addProductImages(uploadedImages: string[], productArticle: string) {
+	// 	const product = await this.findByArticle(productArticle);
 
-	async addProductImages(uploadedImages: string[], productArticle: string) {
-		const product = await this.findByArticle(productArticle);
+	// 	if (!product) {
+	// 		throw new NotFoundException('Продукт не найден');
+	// 	}
 
-		if (!product) {
-			throw new NotFoundException('Продукт не найден');
-		}
+	// 	const updatedImages = [...product.images, ...uploadedImages];
 
-		const updatedImages = [...product.images, ...uploadedImages];
+	// 	const updatedProduct = await this.productModel.findOneAndUpdate(
+	// 		{ article: productArticle },
+	// 		{ images: updatedImages },
+	// 		{ new: true },
+	// 	);
 
-		const updatedProduct = await this.productModel.findOneAndUpdate(
-			{ article: productArticle },
-			{ images: updatedImages },
-			{ new: true },
-		);
+	// 	if (!updatedProduct) {
+	// 		throw new NotFoundException('Не удалось обновить продукт');
+	// 	}
 
-		if (!updatedProduct) {
-			throw new NotFoundException('Не удалось обновить продукт');
-		}
+	// 	return updatedProduct.images;
+	// }
 
-		return updatedProduct.images;
-	}
+	// async deleteImages(productArticle: string, images: string[]) {
+	// 	const product = await this.findByArticle(productArticle);
 
-	async deleteImages(productArticle: string, images: string[]) {
-		const product = await this.findByArticle(productArticle);
+	// 	if (!product) {
+	// 		throw new NotFoundException('Продукт не найден');
+	// 	}
 
-		if (!product) {
-			throw new NotFoundException('Продукт не найден');
-		}
+	// 	const updatedImages = product.images.filter(
+	// 		(image) => !images.includes(image),
+	// 	);
 
-		// Фильтруем массив изображений, оставляя только те, которые не нужно удалить
-		const updatedImages = product.images.filter(
-			(image) => !images.includes(image),
-		);
+	// 	const updatedProduct = await this.productModel.findOneAndUpdate(
+	// 		{ article: productArticle },
+	// 		{ images: updatedImages },
+	// 		{ new: true },
+	// 	);
 
-		const updatedProduct = await this.productModel.findOneAndUpdate(
-			{ article: productArticle },
-			{ images: updatedImages },
-			{ new: true },
-		);
+	// 	if (!updatedProduct) {
+	// 		throw new NotFoundException('Не удалось обновить продукт');
+	// 	}
 
-		if (!updatedProduct) {
-			throw new NotFoundException('Не удалось обновить продукт');
-		}
-
-		return updatedProduct.images;
-	}
+	// 	return updatedProduct.images;
+	// }
 }

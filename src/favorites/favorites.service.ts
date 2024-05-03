@@ -22,7 +22,7 @@ export class FavoritesService {
 	async findFavoritesByUsername(username: string) {
 		const userFavorites = await this.userModel.findOne({ username }).exec();
 
-		const favoritesProducts = await this.productsService.findByArticles(
+		const favoritesProducts = await this.productsService.findProductsByArticles(
 			userFavorites.favorites,
 		);
 
@@ -53,11 +53,11 @@ export class FavoritesService {
 		}
 	}
 
-	async deleteFavoritesByUsername(article: string, username: string) {
+	async replaceFavoritesByUsername(favorites: string[], username: string) {
 		try {
 			const updatedUser = await this.userModel.findOneAndUpdate(
 				{ username },
-				{ $pull: { favorites: article } },
+				{ favorites },
 				{ new: true },
 			);
 
@@ -67,9 +67,7 @@ export class FavoritesService {
 
 			return updatedUser.favorites;
 		} catch (error) {
-			throw new Error(
-				`Error deleting product from favorites: ${error.message}`,
-			);
+			throw new Error(`Ошибка при замене избранных товаров: ${error.message}`);
 		}
 	}
 
@@ -115,11 +113,11 @@ export class FavoritesService {
 		}
 	}
 
-	async replaceFavoritesByUsername(favorites: string[], username: string) {
+	async deleteFavoritesByUsername(article: string, username: string) {
 		try {
 			const updatedUser = await this.userModel.findOneAndUpdate(
 				{ username },
-				{ favorites },
+				{ $pull: { favorites: article } },
 				{ new: true },
 			);
 
@@ -129,7 +127,9 @@ export class FavoritesService {
 
 			return updatedUser.favorites;
 		} catch (error) {
-			throw new Error(`Ошибка при замене избранных товаров: ${error.message}`);
+			throw new Error(
+				`Error deleting product from favorites: ${error.message}`,
+			);
 		}
 	}
 }
