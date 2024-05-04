@@ -62,32 +62,11 @@ export const ProductCreateRequestSchema = z.object({
 });
 
 export const ProductFindRequestSchema = z.object({
-	limit: StringToNumber.default(20),
-	articles: z
-		.string()
-		.transform((value) => value.split(','))
-		.optional(),
+	limit: StringToNumber.optional(),
+	articles: z.array(z.string()).optional(),
 	sort: SortSortingEnum.default('popular').optional(),
 	param: z.string().optional(),
-	filters: z
-		.string()
-		.transform((value) => value.split('-'))
-		.refine(
-			(value) => {
-				const allFilters = SortFiltersEnums.options
-					.map((enumOption) => enumOption.options)
-					.flat();
-
-				return value.every((val) => allFilters.includes(val as SortFilters));
-			},
-			{
-				message: `Некорректные фильтры. Ожидались: ${SortFiltersEnums.options
-					.map((enumOption) => enumOption.options)
-					.flat()
-					.join(', ')}`,
-			},
-		)
-		.optional(),
+	filters: z.array(SortFiltersEnums).optional(),
 	maxPrice: StringToNumber.optional(),
 	minPrice: StringToNumber.optional(),
 });

@@ -114,7 +114,7 @@ export class ProductsService {
 		}
 
 		// Поиск по артикулам продуктов
-		if (dto.articles) {
+		if (dto.articles && dto.articles.length) {
 			aggregatePipeline.push({
 				$match: {
 					article: { $in: dto.articles },
@@ -187,7 +187,7 @@ export class ProductsService {
 		}
 
 		// Добавление лимита
-		aggregatePipeline.push({ $limit: dto.limit });
+		aggregatePipeline.push({ $limit: dto.limit ?? 20 });
 
 		return this.productModel
 			.aggregate(aggregatePipeline)

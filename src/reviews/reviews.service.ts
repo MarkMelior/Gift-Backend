@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import {
 	REVIEW_NOT_FOUND,
 	ReviewFindRequest,
@@ -49,7 +49,17 @@ export class ReviewsService {
 			});
 		}
 
-		aggregatePipeline.push({ $limit: dto.limit });
+		if (dto.ids && dto.ids.length) {
+			const objectIds = dto.ids.map((id) => new Types.ObjectId(id));
+
+			aggregatePipeline.push({
+				$match: {
+					_id: { $in: objectIds },
+				},
+			});
+		}
+
+		aggregatePipeline.push({ $limit: dto.limit ?? 10 });
 
 		return (
 			this.reviewModel

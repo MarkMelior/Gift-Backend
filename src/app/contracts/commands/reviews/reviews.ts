@@ -29,9 +29,10 @@ export const ReviewCreateRequestSchema = z.object({
 });
 
 export const ReviewFindRequestSchema = z.object({
-	limit: StringToNumber.default(10),
+	limit: StringToNumber.optional(),
 	userId: z.string().optional(),
 	status: ReviewStatusSchema.optional(),
+	ids: z.array(z.string()).optional(),
 });
 
 export type ReviewCreateRequest = z.infer<typeof ReviewCreateRequestSchema>;
