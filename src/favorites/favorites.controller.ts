@@ -10,7 +10,7 @@ import {
 	UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { JwtData } from 'src/app/decorators/jwt-data.decorator';
+import { JwtData } from 'src/auth/decorators/jwt-data.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { FavoritesService } from './favorites.service';
 

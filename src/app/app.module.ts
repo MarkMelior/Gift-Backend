@@ -29,5 +29,11 @@ import { getMongoConfig } from './config/mongo.config';
 		// 	useFactory: getTelegramConfig,
 		// }),
 	],
+	providers: [
+		// {
+		// 	provide: 'APP_GUARD',
+		// 	useClass: RolesGuard,
+		// },
+	],
 })
 export class AppModule {}
