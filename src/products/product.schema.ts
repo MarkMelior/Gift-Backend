@@ -16,7 +16,7 @@ export class Product {
 	filters: SortFilters[];
 
 	@Prop({ _id: false, type: () => Object })
-	characteristics: Record<string, string[] | Record<string, string>>;
+	options: Record<string, string>;
 
 	@Prop({ type: () => [typeof ProductMarketsSchema] })
 	markets: (typeof ProductMarketsSchema)[];
@@ -25,7 +25,7 @@ export class Product {
 	article: string;
 
 	@Prop()
-	seoText?: string;
+	description: string;
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);

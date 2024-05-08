@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { MongoDefaultType } from '../../utils/mongo-default-type';
 import { StringToNumber } from '../../utils/string-to-number';
 
 export const REVIEW_NOT_FOUND = 'Отзыв с таким ID не найден';
@@ -39,13 +40,9 @@ export type ReviewCreateRequest = z.infer<typeof ReviewCreateRequestSchema>;
 
 export type ReviewFindRequest = z.infer<typeof ReviewFindRequestSchema>;
 
-export interface ReviewResponse {
-	_id: string;
+export interface ReviewResponse extends MongoDefaultType {
 	rating: number;
 	comment: string;
 	status: ReviewStatus;
 	userId: string;
-	createdAt: Date;
-	updatedAt: Date;
-	__v: number;
 }

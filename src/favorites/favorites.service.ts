@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Product } from 'src/products/product.schema';
 import { ProductsService } from 'src/products/products.service';
 import { User } from 'src/user/user.schema';
 import { USER_NOT_FOUND_ERROR } from 'src/user/users.const';
@@ -10,9 +9,6 @@ import { FAVORITES_NOT_FOUND_ERROR } from './favorites.const';
 @Injectable()
 export class FavoritesService {
 	constructor(
-		@InjectModel(Product.name)
-		private readonly productModel: Model<Product>,
-
 		@InjectModel(User.name)
 		private readonly userModel: Model<User>,
 

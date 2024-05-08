@@ -107,7 +107,7 @@ export class ProductsService {
 				$match: {
 					$or: [
 						{ title: { $regex: dto.param, $options: 'i' } },
-						{ seoText: { $regex: dto.param, $options: 'i' } },
+						{ description: { $regex: dto.param, $options: 'i' } },
 					],
 				},
 			});

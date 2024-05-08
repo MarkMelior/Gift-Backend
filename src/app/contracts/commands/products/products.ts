@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { MongoDefaultType } from '../../utils/mongo-default-type';
 import { StringToNumber } from '../../utils/string-to-number';
 
 export const SortCategoryEnum = z.enum(['birthday', 'love', 'year', 'joke']);
@@ -32,8 +33,11 @@ export type SortSorting = z.infer<typeof SortSortingEnum>;
 export type SortFilters = z.infer<typeof SortFiltersEnums>;
 export type MarketType = z.infer<typeof MarketTypeEnum>;
 
-export const CharacteristicsSchema = z.record(
-	z.union([z.string(), z.array(z.string()), z.record(z.string())]),
+export const OptionsSchema = z.array(
+	z.object({
+		name: z.string(),
+		value: z.string(),
+	}),
 );
 
 export const ProductMarketsSchema = z.object({
@@ -46,13 +50,13 @@ export const ProductMarketsSchema = z.object({
 });
 
 export const ProductCreateRequestSchema = z.object({
+	images: z.array(z.string()).min(1).optional(),
 	title: z.string().min(5),
 	creativity: z.number().max(10).min(1),
 	filters: z.array(SortFiltersEnums).optional(),
-	characteristics: CharacteristicsSchema.optional(),
+	options: OptionsSchema.optional(),
 	markets: z.array(ProductMarketsSchema).min(1),
-	seoText: z.string().optional(),
-	images: z.array(z.string()).min(1).optional(),
+	description: z.string(),
 	article: z
 		.string()
 		.min(9)
@@ -75,16 +79,15 @@ export type ProductCreateRequest = z.infer<typeof ProductCreateRequestSchema>;
 export type ProductFindRequest = z.infer<typeof ProductFindRequestSchema>;
 export type ProductMarkets = z.infer<typeof ProductMarketsSchema>;
 
-export interface ProductResponse {
-	_id: string;
+export interface ProductResponse extends MongoDefaultType {
 	article: string;
 	images: string[];
 	title: string;
 	creativity: number;
 	filters: SortFilters[];
-	characteristics: Record<string, string[] | Record<string, string>>;
+	options: Record<string, string>;
 	markets: ProductMarkets[];
-	seoText?: string;
+	description?: string;
 }
 
 export interface ProductCardResponse {

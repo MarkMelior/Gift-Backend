@@ -12,7 +12,7 @@ export const WRONG_MAX_LENGTH_PASSWORD =
 	'Длинна пароля не должна превышать 32 символа';
 
 export const AuthLoginRequestSchema = z.object({
-	login: z.string().email({ message: WRONG_EMAIL }),
+	login: z.string(),
 	password: z
 		.string()
 		.max(32, { message: WRONG_MAX_LENGTH_PASSWORD })

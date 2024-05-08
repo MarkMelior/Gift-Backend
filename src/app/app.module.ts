@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { FavoritesModule } from 'src/favorites/favorites.module';
 import { FilesModule } from 'src/files/files.module';
+import { ProductsHistoryModule } from 'src/products-history/products-history.module';
 import { UsersModule } from 'src/user/users.module';
 import { AuthModule } from '../auth/auth.module';
 import { ProductsModule } from '../products/products.module';
@@ -23,6 +24,7 @@ import { getMongoConfig } from './config/mongo.config';
 		FilesModule,
 		UsersModule,
 		FavoritesModule,
+		ProductsHistoryModule,
 		// TelegramModule.forRootAsync({
 		// 	imports: [ConfigModule],
 		// 	inject: [ConfigService],

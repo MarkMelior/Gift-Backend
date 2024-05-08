@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { MongoDefaultType } from '../../utils/mongo-default-type';
 
 export const UserRoleEnum = z.enum(['admin', 'manager']);
 
@@ -12,11 +13,11 @@ export const UserFindRequestSchema = z.object({
 
 export type UserFindRequest = z.infer<typeof UserFindRequestSchema>;
 
-export interface UserResponse {
-	_id: string;
+export interface UserResponse extends MongoDefaultType {
 	id: string;
 	email: string;
 	username: string;
+	gameId?: string;
 
 	avatar?: string;
 	roles?: UserRole[];
@@ -25,7 +26,6 @@ export interface UserResponse {
 	first?: string;
 	last?: string;
 
-	gameId?: string;
 	// sex?: Gender;
 	// confidentiality?: ConfidentialityProfile;
 }
