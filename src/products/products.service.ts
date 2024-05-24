@@ -13,7 +13,6 @@ import { FilesService } from 'src/files/files.service';
 import { ProductCreateDto, ProductsFindDto } from './product.dto';
 import { Product } from './product.schema';
 import {
-	PRODUCTS_CARD_DTO,
 	PRODUCT_DELETE_ERROR,
 	PRODUCT_NOT_FOUND_ERROR,
 	PRODUCT_UPDATE_ERROR,
@@ -92,10 +91,12 @@ export class ProductsService {
 	}
 
 	async findProductsByArticles(articles: string[]) {
-		return this.productModel
-			.find({ article: { $in: articles } })
-			.select(PRODUCTS_CARD_DTO)
-			.exec();
+		return (
+			this.productModel
+				.find({ article: { $in: articles } })
+				// .select(PRODUCTS_CARD_DTO)
+				.exec()
+		);
 	}
 
 	async findProducts(dto: ProductsFindDto) {
@@ -186,13 +187,20 @@ export class ProductsService {
 			}
 		}
 
-		// Добавление лимита
-		aggregatePipeline.push({ $limit: dto.limit ?? 20 });
+		// Добавление пропуска и лимита для пагинации
+		const limit = dto.limit ?? 20;
+		const page = dto.page ?? 1;
+		const skip = (page - 1) * limit;
 
-		return this.productModel
-			.aggregate(aggregatePipeline)
-			.project(PRODUCTS_CARD_DTO)
-			.exec();
+		aggregatePipeline.push({ $skip: skip });
+		aggregatePipeline.push({ $limit: limit });
+
+		return (
+			this.productModel
+				.aggregate(aggregatePipeline)
+				// .project(PRODUCTS_CARD_DTO)
+				.exec()
+		);
 	}
 
 	// async getPrices() {

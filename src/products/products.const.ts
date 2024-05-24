@@ -10,4 +10,5 @@ export const PRODUCTS_CARD_DTO = {
 	title: 1,
 	markets: { $slice: ['$markets', 1] },
 	article: 1,
+	updatedAt: 1,
 };

@@ -6,8 +6,8 @@ import {
 	MaxFileSizeValidator,
 	Param,
 	ParseFilePipe,
-	Patch,
 	Post,
+	Put,
 	Query,
 	UploadedFiles,
 	UseGuards,
@@ -16,7 +16,6 @@ import {
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ArticleValidationPipe } from 'src/app/pipes/article-validation.pipe';
-import { IdValidationPipe } from 'src/app/pipes/id-validation.pipe';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { ProductCreateDto, ProductsFindDto } from './product.dto';
 import { ProductsService } from './products.service';
@@ -44,9 +43,9 @@ export class ProductsController {
 
 	@ApiBearerAuth()
 	@UseGuards(JwtAuthGuard)
-	@Patch(':article')
+	@Put(':article')
 	async updateProduct(
-		@Param('article', IdValidationPipe) article: string,
+		@Param('article') article: string,
 		@Body() dto: ProductCreateDto,
 	) {
 		return this.productsService.updateProduct(article, dto);
@@ -55,7 +54,7 @@ export class ProductsController {
 	@ApiBearerAuth()
 	@UseGuards(JwtAuthGuard)
 	@Delete(':article')
-	async deleteProduct(@Param('article', IdValidationPipe) article: string) {
+	async deleteProduct(@Param('article') article: string) {
 		return this.productsService.deleteProduct(article);
 	}
 

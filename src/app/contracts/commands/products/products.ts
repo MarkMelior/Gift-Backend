@@ -67,6 +67,7 @@ export const ProductCreateRequestSchema = z.object({
 
 export const ProductFindRequestSchema = z.object({
 	limit: StringToNumber.optional(),
+	page: StringToNumber.optional(),
 	articles: z.array(z.string()).optional(),
 	sort: SortSortingEnum.default('popular').optional(),
 	param: z.string().optional(),
@@ -78,6 +79,7 @@ export const ProductFindRequestSchema = z.object({
 export type ProductCreateRequest = z.infer<typeof ProductCreateRequestSchema>;
 export type ProductFindRequest = z.infer<typeof ProductFindRequestSchema>;
 export type ProductMarkets = z.infer<typeof ProductMarketsSchema>;
+export type Options = z.infer<typeof OptionsSchema>;
 
 export interface ProductResponse extends MongoDefaultType {
 	article: string;
@@ -85,7 +87,7 @@ export interface ProductResponse extends MongoDefaultType {
 	title: string;
 	creativity: number;
 	filters: SortFilters[];
-	options: Record<string, string>;
+	options: Options;
 	markets: ProductMarkets[];
 	description?: string;
 }
@@ -95,6 +97,7 @@ export interface ProductCardResponse {
 	title: string;
 	markets: ProductMarkets[];
 	article: string;
+	updatedAt: string;
 }
 
 export interface ProductPricesResponse {
