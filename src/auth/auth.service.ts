@@ -67,6 +67,7 @@ export class AuthService {
 			maxAge: 15 * 60 * 1000,
 		});
 
-		return res.json({ message: 'Успешная авторизация' });
+		return res.json({ access_token });
+		// return res.json({ message: 'Успешная авторизация' });
 	}
 }

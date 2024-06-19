@@ -7,7 +7,9 @@ import { AppModule } from './app/app.module';
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
 
-	app.enableCors();
+	app.enableCors({
+		exposedHeaders: ['X-Total-Products'],
+	});
 	app.setGlobalPrefix('api');
 	app.useGlobalPipes(new ZodValidationPipe());
 	app.use(cookieParser());

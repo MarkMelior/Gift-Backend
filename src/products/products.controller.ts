@@ -9,12 +9,14 @@ import {
 	Post,
 	Put,
 	Query,
+	Res,
 	UploadedFiles,
 	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Response } from 'express';
 import { ArticleValidationPipe } from 'src/app/pipes/article-validation.pipe';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { ProductCreateDto, ProductsFindDto } from './product.dto';
@@ -59,8 +61,8 @@ export class ProductsController {
 	}
 
 	@Get()
-	async findProducts(@Query() dto: ProductsFindDto) {
-		return this.productsService.findProducts(dto);
+	async findProducts(@Query() dto: ProductsFindDto, @Res() res: Response) {
+		return this.productsService.findProducts(dto, res);
 	}
 
 	@Get(':article')

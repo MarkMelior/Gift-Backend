@@ -4,6 +4,7 @@ import {
 	NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { Response } from 'express';
 import { Model } from 'mongoose';
 import {
 	ProductCreateRequestSchema,
@@ -77,6 +78,9 @@ export class ProductsService {
 			throw new NotFoundException(PRODUCT_DELETE_ERROR);
 		}
 
+		// ! fix
+		await this.filesService.deleteAllProductImages(article);
+
 		return deletedProduct;
 	}
 
@@ -99,7 +103,7 @@ export class ProductsService {
 		);
 	}
 
-	async findProducts(dto: ProductsFindDto) {
+	async findProducts(dto: ProductsFindDto, res: Response) {
 		const aggregatePipeline = [];
 
 		// Поиск по param
@@ -187,6 +191,13 @@ export class ProductsService {
 			}
 		}
 
+		// Создание копии pipeline для подсчета общего количества продуктов
+		const countPipeline = [...aggregatePipeline, { $count: 'total' }];
+
+		// Выполнение агрегации для подсчета общего количества продуктов
+		const countResult = await this.productModel.aggregate(countPipeline).exec();
+		const totalProducts = countResult[0]?.total ?? 0;
+
 		// Добавление пропуска и лимита для пагинации
 		const limit = dto.limit ?? 20;
 		const page = dto.page ?? 1;
@@ -195,12 +206,14 @@ export class ProductsService {
 		aggregatePipeline.push({ $skip: skip });
 		aggregatePipeline.push({ $limit: limit });
 
-		return (
-			this.productModel
-				.aggregate(aggregatePipeline)
-				// .project(PRODUCTS_CARD_DTO)
-				.exec()
-		);
+		const products = await this.productModel
+			.aggregate(aggregatePipeline)
+			// .project(PRODUCTS_CARD_DTO)
+			.exec();
+
+		// Установка заголовка с общим количеством продуктов
+		res.set('X-Total-Products', totalProducts.toString());
+		return res.json(products);
 	}
 
 	// async getPrices() {
