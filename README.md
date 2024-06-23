@@ -29,11 +29,11 @@
 
 - Обеспечена полная типизация проекта с использованием TypeScript;
 
-- Взаимодействие с данными осуществляется с помощью Redux Toolkit, запросы на сервер отправляются через [RTK query](/src/shared/api/rtkApi.ts);
+- Взаимодействие с данными осуществляется с помощью Redux Toolkit, запросы на сервер отправляются через [RTK query](https://github.com/MarkMelior/Gift-Frontend/blob/master/src/shared/api/rtkApi.ts);
 
-- Для асинхронного подключения редюсеров (чтобы не тянуть их в общий бандл) используется [DynamicModuleLoader](/src/shared/lib/components/dynamic-module-loader/dynamic-module-loader.tsx);
+- Для асинхронного подключения редюсеров (чтобы не тянуть их в общий бандл) используется [DynamicModuleLoader](https://github.com/MarkMelior/Gift-Frontend/blob/master/src/shared/lib/components/dynamic-module-loader/dynamic-module-loader.tsx);
 
-- Разработана собственная библиотека [адаптивных компонентов](/src/shared/ui), обеспечивающая высокую гибкость;
+- Разработана собственная библиотека [адаптивных компонентов](https://github.com/MarkMelior/Gift-Frontend/tree/master/src/shared/ui), обеспечивающая высокую гибкость;
 
 - Реализованы ключевые функции сайта, включая авторизацию и регистрацию пользователей, админ панель для управления продуктами, функцию оптимизации сайта для слабых устройств, фильтры и сортировку товаров, тёмную и светлую тему, добавление в избранное и просмотр истории;
 
